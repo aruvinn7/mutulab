@@ -1,0 +1,50 @@
+---
+/** Rumus KaTeX dirender saat build (Astro), sehingga tidak perlu JS tambahan. */
+import katex from 'katex';
+
+interface Props {
+  tex: string;
+  caption?: string;
+  display?: boolean;
+}
+const { tex, caption, display = true } = Astro.props;
+
+let html = '';
+try {
+  html = katex.renderToString(tex, {
+    displayMode: display,
+    throwOnError: false,
+    strict: 'ignore',
+    trust: false,
+    output: 'html',
+  });
+} catch {
+  html = `<code>${tex}</code>`;
+}
+---
+
+<figure class:list={['formula-block-card', { compact: !display }]}>
+  <div class="formula-render" set:html={html} />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .formula-block-card {
+    margin: 0;
+    padding: 1rem 1.2rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 6px 18px rgba(16, 42, 110, 0.05);
+    overflow-x: auto;
+  }
+  .formula-block-card.compact { padding: .45rem .75rem; display: inline-block; }
+  .formula-render { color: var(--ink); }
+  figcaption {
+    margin-top: .55rem;
+    font-size: var(--fs-micro);
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  html[data-teaching='true'] .formula-block-card { background: #fff; }
+</style>

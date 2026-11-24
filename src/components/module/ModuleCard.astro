@@ -1,0 +1,100 @@
+---
+/** Kartu modul pada halaman daftar. Status progres diisi oleh skrip klien. */
+import type { ModuleMeta } from '../../data/site';
+import { STAGES } from '../../data/site';
+import ModuleIcon from './ModuleIcon.astro';
+
+interface Props {
+  module: ModuleMeta;
+  index?: number;
+}
+const { module, index = 0 } = Astro.props;
+const totalStages = STAGES.length;
+const trackLabel: Record<string, string> = {
+  sampling: 'Sampling',
+  fondasi: 'Fondasi DOE',
+  doe: 'DOE',
+  taguchi: 'Taguchi',
+};
+---
+
+<a
+  class="module-card card"
+  href={`/modul/${module.slug}/`}
+  data-module-card
+  data-slug={module.slug}
+  data-track={module.track}
+>
+  <div class="card-top">
+    <span class="module-number mono" aria-hidden="true">{module.number.padStart(2, '0')}</span>
+    <span class="module-icon-wrap"><ModuleIcon name={module.icon} size={22} /></span>
+  </div>
+
+  <div class="card-heading">
+    <span class="eyebrow track-label">Modul {module.number} · {trackLabel[module.track] ?? module.track}</span>
+    <h2 class="serif">{module.title}</h2>
+    <p class="subtitle">{module.subtitle}</p>
+  </div>
+
+  <p class="description text-soft">{module.description}</p>
+
+  <div class="meta-row">
+    <span class="chip" title="Estimasi waktu belajar">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" stroke-linecap="round" /></svg>
+      {module.minutes} menit
+    </span>
+    <span class="chip" data-difficulty={module.difficulty}>{module.difficulty}</span>
+  </div>
+
+  <div class="card-footer">
+    <div class="progress-wrap" data-progress-wrap data-total={totalStages}>
+      <span class="status-text" data-status>Belum dimulai</span>
+      <div class="progress-track" role="presentation"><div class="progress-fill" data-fill></div></div>
+    </div>
+    <span class="go" aria-hidden="true">↗</span>
+  </div>
+</a>
+
+<style>
+  .module-card {
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+    padding: 1.5rem 1.6rem 1.35rem;
+    min-height: 290px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .module-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(600px 180px at 90% -10%, rgba(47,107,255,.09), transparent 70%);
+    pointer-events: none;
+  }
+  .module-card:hover { transform: translateY(-4px); border-color: rgba(47,107,255,.35); box-shadow: 0 18px 42px rgba(16,42,110,.13); }
+  .card-top { display: flex; align-items: center; justify-content: space-between; }
+  .module-number { font-size: 2.4rem; font-weight: 500; line-height: 1; color: var(--accent); opacity: .32; }
+  .module-icon-wrap {
+    width: 42px; height: 42px; border-radius: 13px;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .card-heading h2 { font-family: var(--font-display); font-size: var(--fs-h3); line-height: 1.15; margin-top: .35rem; }
+  .track-label { color: var(--accent); }
+  .subtitle { font-size: var(--fs-small); color: var(--ink-soft); margin-top: .3rem; }
+  .description { font-size: var(--fs-small); line-height: 1.55; flex: 1; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .meta-row .chip[data-difficulty='Dasar'] { color: #0d6b49; }
+  .meta-row .chip[data-difficulty='Menengah'] { color: #8a5700; }
+  .meta-row .chip[data-difficulty='Lanjutan'] { color: #a5161b; }
+  .card-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+    border-top: 1px solid var(--surface-border); padding-top: .9rem; }
+  .progress-wrap { flex: 1; display: grid; gap: .4rem; }
+  .status-text { font-size: var(--fs-micro); font-weight: 600; color: var(--ink-soft); }
+  .status-text[data-done='true'] { color: #0d6b49; }
+  .progress-track { height: 5px; border-radius: 999px; background: var(--surface-soft); overflow: hidden; }
+  .progress-fill { height: 100%; width: 0; border-radius: inherit; background: var(--accent); transition: width .35s ease; }
+  .go { font-size: 1.25rem; color: var(--accent); line-height: 1; }
+  html[data-teaching='true'] .module-card::after { display: none; }
+</style>

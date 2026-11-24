@@ -1,0 +1,49 @@
+---
+/** Kartu keputusan statistik pada jendela pratinjau. */
+---
+
+<div class="decision-card">
+  <span class="decision-kicker mono">Keputusan uji · α = 0,05</span>
+
+  <div class="decision-row">
+    <span class="chip" data-tone="danger">Tolak H₀</span>
+    <span class="decision-p mono">p = 0,0009</span>
+  </div>
+
+  <p class="decision-line mono">F<sub>hitung</sub> 7,83 &gt; F<sub>kritis</sub> 3,10</p>
+
+  <div class="meter" aria-hidden="true">
+    <div class="meter-fill"></div>
+    <div class="meter-mark"></div>
+  </div>
+  <div class="meter-labels mono" aria-hidden="true"><span>0</span><span>F<sub>kritis</sub></span><span>7,83</span></div>
+
+  <p class="decision-meaning">
+    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9" /><path d="m8.5 12 2.4 2.4 4.7-5" />
+    </svg>
+    Minimal satu perlakuan berbeda secara signifikan — lanjut ke uji Fisher LSD.
+  </p>
+</div>
+
+<style>
+  .decision-card { margin-top: .85rem; }
+  .decision-kicker { font-size: .6rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-soft); }
+  .decision-row { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-top: .55rem; }
+  .decision-row .chip { font-size: .8rem; padding: .38rem .9rem; }
+  .decision-p { font-size: .72rem; color: #a5161b; font-weight: 600; } /* merah gelap: 7,7:1 di atas kartu putih */
+  .decision-line { margin-top: .65rem; font-size: .68rem; color: var(--ink-soft); }
+  .decision-line sub { font-size: .55rem; }
+  .meter { position: relative; height: 7px; margin-top: .8rem; border-radius: var(--radius-pill);
+    background: var(--surface-border); overflow: visible; }
+  .meter-fill { height: 100%; width: 78%; border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, var(--accent), var(--danger)); }
+  .meter-mark { position: absolute; left: 39.6%; top: -4px; height: 15px; width: 2px;
+    border-radius: 2px; background: var(--ink); }
+  .meter-labels { display: flex; justify-content: space-between; margin-top: .35rem;
+    font-size: .57rem; color: var(--ink-soft); }
+  .decision-meaning { display: flex; gap: .45rem; align-items: flex-start; margin-top: .75rem;
+    padding-top: .65rem; border-top: 1px solid var(--surface-border);
+    font-size: .68rem; line-height: 1.5; color: var(--ink-soft); }
+  .decision-meaning svg { color: var(--ok); flex-shrink: 0; margin-top: 1px; }
+</style>

@@ -1,0 +1,38 @@
+---
+/** Kartu-kartu rumus kunci (cheat sheet) yang dipakai di panel ringkasan. */
+import FormulaBlock from './FormulaBlock.astro';
+import type { CheatItem } from '../../content/modules/types';
+
+interface Props {
+  items: CheatItem[];
+  compact?: boolean;
+}
+const { items, compact = false } = Astro.props;
+---
+
+<div class:list={['cheat-grid', { compact }]}>
+  {items.map((item) => (
+    <div class="cheat-item">
+      <span class="cheat-label">{item.label}</span>
+      {item.tex && <FormulaBlock tex={item.tex} display={false} />}
+      <p>{item.note}</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .cheat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  .cheat-grid.compact { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+  .cheat-item {
+    padding: .9rem 1rem; border-radius: 16px;
+    background: rgba(255,255,255,.8); border: 1px solid var(--surface-border);
+    display: grid; gap: .4rem; align-content: start;
+  }
+  .cheat-label {
+    font-size: var(--fs-micro); font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .cheat-item p { font-size: var(--fs-small); line-height: 1.55; color: var(--ink-soft); }
+  @media (max-width: 639px) { .cheat-grid { grid-template-columns: 1fr; } }
+  html[data-teaching='true'] .cheat-item { background: #fff; }
+</style>

@@ -1,0 +1,25 @@
+.spotlight-card {
+  position: relative;
+  isolation: isolate;
+  --sx: 50%;
+  --sy: 50%;
+  --s-opacity: 0;
+}
+.spotlight-card__light {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--s-opacity);
+  background: radial-gradient(
+    var(--s-size) circle at var(--sx) var(--sy),
+    rgba(var(--s-color), .22) 0%,
+    rgba(var(--s-color), .09) 38%,
+    transparent 72%
+  );
+  transition: opacity .25s cubic-bezier(.23, 1, .32, 1);
+}
+.spotlight-card > :not(.spotlight-card__light) { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) { .spotlight-card__light { transition: none; } }
+html[data-teaching='true'] .spotlight-card__light { display: none; }

@@ -1,0 +1,240 @@
+/* MutuLab — gaya bersama kalkulator (Agen K). Memakai token dari tokens.css. */
+
+.calc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 1.1rem;
+  align-items: flex-end;
+  margin-bottom: 1.1rem;
+}
+.calc-field { display: flex; flex-direction: column; gap: 0.4rem; min-width: 116px; }
+.calc-field > label,
+.calc-field-label {
+  font-size: var(--fs-micro);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.calc-input-line { display: flex; align-items: center; gap: 0.4rem; }
+.calc-input {
+  width: 100%;
+  min-height: 44px;
+  background: #fff;
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  color: var(--ink);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+.calc-input:hover:not(:disabled) { border-color: var(--mtn-mid); }
+.calc-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(36, 89, 224, 0.22); }
+.calc-input:disabled { background: var(--surface-soft); color: var(--ink-soft); opacity: 0.65; cursor: not-allowed; }
+.calc-input[data-invalid='true'] { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(229, 72, 77, 0.14); }
+.calc-suffix { font-size: var(--fs-micro); color: var(--ink); white-space: nowrap; }
+.calc-hint { font-size: 0.78rem; line-height: 1.45; color: var(--ink); }
+.calc-error { font-size: 0.78rem; line-height: 1.45; color: #a5161b; font-weight: 700; }
+
+/* Slider: area klik 44px, track/thumb jelas, fokus & disabled terlihat. */
+.calc-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.calc-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  border: 1px solid var(--surface-border);
+}
+.calc-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 7px rgba(16, 42, 110, 0.32);
+}
+.calc-slider::-moz-range-track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  border: 1px solid var(--surface-border);
+}
+.calc-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 7px rgba(16, 42, 110, 0.32);
+}
+.calc-slider:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: var(--radius-pill); }
+.calc-slider:disabled { opacity: 0.5; cursor: not-allowed; }
+.calc-slider-scale { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--ink); font-family: var(--font-mono); }
+
+.calc-panel { padding: 1.15rem 1.35rem; }
+/* Panel diagnostik pendek tidak boleh meregang menjadi kartu kosong 900px. */
+.calc-body .bento > aside.calc-panel { align-self: start; }
+.calc-panel > h2,
+.calc-panel > h3 { font-family: var(--font-display); font-size: var(--fs-h3); margin-bottom: 0.55rem; }
+.calc-panel > p { font-size: var(--fs-small); line-height: 1.65; color: var(--ink-soft); }
+.calc-panel + .calc-panel { margin-top: 1rem; }
+
+.calc-matrix-wrap { overflow-x: auto; padding-bottom: 0.25rem; }
+.calc-matrix { border-collapse: separate; border-spacing: 6px; font-family: var(--font-mono); font-size: var(--fs-small); }
+.calc-matrix th {
+  font-family: var(--font-ui);
+  font-size: var(--fs-micro);
+  color: var(--ink);
+  font-weight: 700;
+  padding: 0.2rem 0.35rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.calc-matrix td:first-child,
+.calc-matrix th:first-child { text-align: left; white-space: nowrap; }
+.calc-matrix input {
+  width: 82px;
+  min-height: 44px;
+  text-align: right;
+  background: #fff;
+  border: 1px solid var(--surface-border);
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-small);
+  color: var(--ink);
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+.calc-matrix input:hover:not(:disabled) { border-color: var(--mtn-mid); }
+.calc-matrix input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(36, 89, 224, 0.2); }
+.calc-matrix input:disabled { background: var(--surface-soft); color: var(--ink-soft); opacity: 0.65; cursor: not-allowed; }
+.calc-matrix input[data-invalid='true'] { border-color: var(--danger); background: rgba(229, 72, 77, 0.07); }
+.calc-matrix-note { margin-top: 0.5rem; font-size: var(--fs-micro); color: var(--ink); }
+
+.calc-notice {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  font-size: var(--fs-small);
+  line-height: 1.55;
+}
+.calc-notice[data-tone='error'] { background: rgba(229, 72, 77, 0.1); border: 1px solid rgba(229, 72, 77, 0.32); color: #8f1d21; }
+.calc-notice[data-tone='warn'] { background: rgba(245, 165, 36, 0.13); border: 1px solid rgba(245, 165, 36, 0.34); color: #7a4d00; }
+.calc-notice[data-tone='info'] { background: rgba(36, 89, 224, 0.09); border: 1px solid rgba(36, 89, 224, 0.26); color: #16439c; }
+.calc-notice strong { display: block; margin-bottom: 0.15rem; }
+.calc-notice-icon { flex: 0 0 auto; font-weight: 800; }
+
+.calc-result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; margin: 0.75rem 0; }
+.calc-result-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.calc-kpi {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+}
+.calc-kpi span { display: block; font-size: var(--fs-micro); color: var(--ink); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.calc-kpi strong { display: block; margin-top: 0.15rem; font-family: var(--font-mono); font-size: 1rem; font-variant-numeric: tabular-nums; color: var(--ink); }
+.calc-chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.8rem 0; }
+.calc-formula-line { padding: 0.35rem 0 0.15rem; overflow-x: auto; }
+.calc-substitution {
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 0.5rem 0.75rem;
+  margin: 0.5rem 0;
+  overflow-x: auto;
+  color: var(--ink);
+}
+.calc-step-conclusion { font-size: var(--fs-small); line-height: 1.7; }
+.calc-step-conclusion strong { color: var(--ink); }
+
+.calc-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.calc-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--surface-border);
+  background: #fff;
+  color: var(--ink);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+.calc-action-btn:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--accent); box-shadow: 0 8px 18px rgba(16, 42, 110, 0.16); }
+.calc-action-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.calc-action-btn:active:not(:disabled) { transform: translateY(0); }
+.calc-action-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.calc-action-btn.secondary { background: var(--surface-soft); color: var(--ink); }
+.calc-action-btn.secondary:hover:not(:disabled) { background: var(--accent-soft); }
+.calc-action-status { font-size: 0.76rem; font-weight: 700; color: #0d6b49; white-space: nowrap; }
+.calc-action-status[data-tone='fail'] { color: #a5161b; }
+
+/* Tombol langkah RevealSteps: target sentuh minimal 44px di dalam kalkulator. */
+.calc-body .stepper button { min-width: 44px; min-height: 44px; }
+.calc-body .stepper button:hover:not(:disabled) { background: var(--accent-soft); }
+.calc-body .stepper button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.calc-body .stepper button:disabled { opacity: 0.4; cursor: not-allowed; }
+.calc-body .stepper .text-btn { min-width: 0; }
+
+.calc-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius-pill);
+  padding: 0.18rem 0.55rem;
+}
+.calc-tight-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: var(--fs-small); }
+.calc-tight-table th { background: var(--accent-soft); color: var(--ink); text-align: right; padding: 0.5rem 0.7rem; font-weight: 700; }
+.calc-tight-table th:first-child, .calc-tight-table td:first-child { text-align: left; font-family: var(--font-ui); }
+.calc-tight-table td { padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--surface-border); text-align: right; color: var(--ink); }
+.calc-tight-table tr.significant td { background: rgba(31, 169, 113, 0.1); }
+.calc-tight-table caption { text-align: left; font-family: var(--font-ui); font-size: var(--fs-micro); font-weight: 700; color: var(--ink); padding-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.calc-scroll { overflow-x: auto; }
+
+/* Permukaan tabel/angka tetap putih solid di atas jendela kaca CalculatorFrame. */
+.calc-body .card { background: var(--surface); }
+
+@media (max-width: 639px) {
+  .calc-result-grid, .calc-result-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+  .calc-toolbar > * { flex: 1 1 140px; }
+  .calc-panel { padding: 1rem; }
+}
+
+/* Mode Mengajar: tanpa bayangan/efek dekoratif, kontras maksimal. */
+html[data-teaching='true'] .calc-input,
+html[data-teaching='true'] .calc-matrix input,
+html[data-teaching='true'] .calc-action-btn { background: #fff; box-shadow: none; }
+html[data-teaching='true'] .calc-action-btn:hover { transform: none; box-shadow: none; }
+html[data-teaching='true'] .calc-slider::-webkit-slider-thumb,
+html[data-teaching='true'] .calc-slider::-moz-range-thumb { box-shadow: none; }
+html[data-teaching='true'] .calc-notice { box-shadow: none; }
+
+@media (prefers-contrast: more) {
+  .calc-input, .calc-matrix input, .calc-action-btn { background: #fff; }
+}

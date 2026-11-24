@@ -1,0 +1,177 @@
+---
+import Logo from './Logo.astro';
+import { NAV_LINKS, SEARCH_INDEX } from '../../data/site';
+---
+
+<header class="topbar-wrap" data-hide-when-teaching-nav>
+  <nav class="topbar glass" aria-label="Navigasi utama">
+    <a href="/" class="brand" aria-label="MutuLab — Beranda"><Logo size={26} light /></a>
+
+    <ul class="nav-links">
+      {NAV_LINKS.map((link) => (
+        <li><a href={link.href} class:list={['nav-link', { active: Astro.url.pathname.startsWith(link.href) }]}>{link.label}</a></li>
+      ))}
+    </ul>
+
+    <div class="actions">
+      <div class="search" role="search">
+        <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="global-search" type="search" placeholder="Cari modul, rumus…" aria-label="Cari modul, kalkulator, atau rumus" autocomplete="off" />
+        <kbd>/</kbd>
+        <div id="search-results" class="search-results glass-solid" hidden></div>
+      </div>
+
+      <button id="teaching-toggle" class="teach-btn" type="button" aria-pressed="false" title="Mode Mengajar (P)">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 20h8M12 17v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="teach-label">Mode Mengajar</span>
+      </button>
+
+      <button id="menu-toggle" class="menu-btn" type="button" aria-label="Buka menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<script define:vars={{ index: SEARCH_INDEX }}>
+  // --- Mode Mengajar ---
+  const root = document.documentElement;
+  const toggle = document.getElementById('teaching-toggle');
+
+  function applyTeaching(active, persist = true) {
+    root.dataset.teaching = active ? 'true' : 'false';
+    if (toggle) {
+      toggle.setAttribute('aria-pressed', String(active));
+      toggle.classList.toggle('is-active', active);
+    }
+    if (persist) {
+      try { localStorage.setItem('mutulab.teaching', active ? '1' : '0'); } catch {}
+      try { sessionStorage.setItem('mutulab.reveal.reset', '1'); } catch {}
+    }
+    window.dispatchEvent(new CustomEvent('mutulab:teaching', { detail: { active } }));
+  }
+  window.addEventListener('mutulab:teaching:sync', () => {
+    applyTeaching(root.dataset.teaching === 'true', false);
+  });
+  toggle?.addEventListener('click', () => applyTeaching(root.dataset.teaching !== 'true'));
+  document.addEventListener('keydown', (e) => {
+    const el = e.target;
+    if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return;
+    if (e.key.toLowerCase() === 'p' && !e.ctrlKey && !e.metaKey) applyTeaching(root.dataset.teaching !== 'true');
+  });
+
+  // --- Pencarian kapsul ---
+  const input = document.getElementById('global-search');
+  const results = document.getElementById('search-results');
+  function render(q) {
+    if (!results) return;
+    const term = q.trim().toLowerCase();
+    if (!term) { results.hidden = true; results.innerHTML = ''; return; }
+    const hits = index
+      .filter((item) => (item.label.toLowerCase() + ' ' + item.keywords.join(' ')).includes(term))
+      .slice(0, 7);
+    results.innerHTML = hits.length
+      ? hits.map((h) => `<a href="${h.href}" class="result"><span class="kind">${h.kind}</span><span>${h.label}</span><span aria-hidden="true">↗</span></a>`).join('')
+      : '<div class="empty">Tidak ada hasil. Coba “ANOVA”, “Yates”, atau “S/N”.</div>';
+    results.hidden = false;
+  }
+  input?.addEventListener('input', (e) => render(e.target.value));
+  input?.addEventListener('focus', () => { if (input.value) render(input.value); });
+  input?.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { results.hidden = true; input.blur(); }
+    if (e.key === 'Enter') { const first = results?.querySelector('a'); if (first) window.location.href = first.getAttribute('href'); }
+  });
+  document.addEventListener('keydown', (e) => {
+    const el = e.target;
+    if (e.key === '/' && !(el instanceof HTMLInputElement) && !(el instanceof HTMLTextAreaElement)) {
+      e.preventDefault(); input?.focus();
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if (results && !results.contains(e.target) && e.target !== input) results.hidden = true;
+  });
+
+  // --- Menu HP ---
+  const menuBtn = document.getElementById('menu-toggle');
+  menuBtn?.addEventListener('click', () => {
+    const open = document.querySelector('.topbar').classList.toggle('menu-open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+  });
+</script>
+
+<style>
+  .topbar-wrap {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; justify-content: center;
+    padding: 16px 16px 0;
+    pointer-events: none;
+  }
+  .topbar {
+    pointer-events: auto;
+    display: flex; align-items: center; gap: 1.2rem;
+    width: min(1120px, 100%);
+    padding: 8px 9px 8px 16px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(120deg, rgba(18, 34, 72, .72), rgba(8, 18, 42, .58));
+    border-color: rgba(255,255,255,.30);
+    backdrop-filter: blur(30px) saturate(170%);
+    -webkit-backdrop-filter: blur(30px) saturate(170%);
+    box-shadow: 0 18px 50px rgba(4, 18, 54, .32),
+      inset 0 1px 0 rgba(255,255,255,.32), inset 0 -1px 0 rgba(255,255,255,.10);
+    color: #fff;
+  }
+  .brand { display: inline-flex; flex-shrink: 0; }
+  .nav-links { display: flex; align-items: center; gap: .15rem; list-style: none; margin: 0; flex: 1; }
+  .nav-link {
+    display: inline-block; padding: .5rem .75rem; border-radius: var(--radius-pill);
+    font-size: .84rem; font-weight: 500; color: rgba(255,255,255,.76);
+    transition: color .15s ease, background .15s ease;
+  }
+  .nav-link:hover { color: #fff; background: rgba(255,255,255,.09); }
+  .nav-link.active { color: #fff; background: rgba(255,255,255,.14); }
+  .actions { display: flex; align-items: center; gap: .5rem; }
+
+  .search { position: relative; display: flex; align-items: center; gap: .4rem;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14);
+    border-radius: var(--radius-pill); padding: .42rem .7rem; width: 210px; }
+  .search-icon { opacity: .7; flex-shrink: 0; }
+  .search input { width: 100%; min-width: 0; background: none; border: 0; outline: 0; color: #fff; font-size: .78rem; }
+  .search input::placeholder { color: rgba(255,255,255,.55); }
+  .search input::-webkit-search-cancel-button { display: none; }
+  .search kbd { font-size: .65rem; border: 1px solid rgba(255,255,255,.25); border-radius: 5px; padding: 0 .3rem; color: rgba(255,255,255,.6); }
+  .search-results { position: absolute; top: calc(100% + 10px); right: 0; width: 330px;
+    padding: .4rem; border-radius: 16px; color: var(--ink); background: rgba(255,255,255,.97);
+    box-shadow: 0 18px 50px rgba(4,18,54,.24); }
+  .result { display: flex; align-items: center; gap: .6rem; padding: .55rem .65rem; border-radius: 10px; font-size: .82rem; }
+  .result:hover { background: var(--surface-soft); }
+  .result .kind { font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--accent); background: var(--accent-soft); padding: .18rem .4rem; border-radius: 5px; }
+  .result span:last-child { margin-left: auto; opacity: .5; }
+  .empty { padding: .8rem; font-size: .8rem; color: var(--ink-soft); }
+
+  .teach-btn { display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #fff;
+    padding: .48rem .8rem; border-radius: var(--radius-pill); font-size: .78rem; font-weight: 600; }
+  .teach-btn:hover { background: rgba(255,255,255,.18); }
+  .teach-btn.is-active { background: #fff; color: var(--ink); border-color: #fff; }
+  .menu-btn { display: none; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+    color: #fff; border-radius: 50%; width: 38px; height: 38px; align-items: center; justify-content: center; }
+
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .topbar.menu-open .nav-links { display: flex; position: absolute; top: 62px; left: 0; right: 0;
+      flex-direction: column; align-items: stretch; background: rgba(12,22,48,.96); padding: .6rem;
+      border-radius: 20px; box-shadow: 0 18px 40px rgba(0,0,0,.25); }
+    .topbar.menu-open .nav-link { text-align: left; padding: .7rem .9rem; }
+    .menu-btn { display: inline-flex; }
+    .search { width: 150px; }
+    .teach-label { display: none; }
+  }
+  @media (max-width: 560px) {
+    .search { width: 42px; padding: .45rem; }
+    .search input, .search kbd { display: none; }
+    .search:focus-within { width: 180px; }
+    .search:focus-within input { display: block; }
+  }
+  html[data-teaching='true'] .topbar { background: #0c1630; box-shadow: none; }
+</style>

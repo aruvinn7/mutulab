@@ -1,0 +1,64 @@
+---
+/** Mini matriks ortogonal L4 dengan kolom S/N (larger-is-better). */
+const rows = [
+  { run: '1', a: 'A₁ · 60 °C', b: 'B₁ · 10 mnt', mean: '73,3', sn: '37,30', best: false },
+  { run: '2', a: 'A₁ · 60 °C', b: 'B₂ · 18 mnt', mean: '79,9', sn: '38,05', best: false },
+  { run: '3', a: 'A₂ · 72 °C', b: 'B₁ · 10 mnt', mean: '69,6', sn: '36,82', best: false },
+  { run: '4', a: 'A₂ · 72 °C', b: 'B₂ · 18 mnt', mean: '84,8', sn: '38,56', best: true },
+];
+---
+
+<div class="taguchi-mini">
+  <div class="taguchi-head">
+    <span class="mono">L₄ (2³) · 2 faktor</span>
+    <span class="taguchi-mode">Larger is better</span>
+  </div>
+  <div class="mini-scroll">
+  <table class="data-table taguchi-table">
+    <caption class="sr-only">Matriks ortogonal Taguchi L4 dengan empat run, dua faktor, rata-rata respons, dan rasio S/N dalam desibel. Run 4 memiliki S/N tertinggi, 38,56 dB.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Run</th>
+        <th scope="col">A · Suhu</th>
+        <th scope="col">B · Waktu</th>
+        <th scope="col">ṟ</th>
+        <th scope="col">S/N (dB)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr class:list={{ 'is-best': r.best }}>
+          <th scope="row">{r.run}</th>
+          <td>{r.a}</td>
+          <td>{r.b}</td>
+          <td>{r.mean}</td>
+          <td><span class="sn-value">{r.sn}</span>{r.best && <span class="best-star" aria-label="terbaik">★</span>}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  </div>
+  <p class="taguchi-note">S/N = −10·log<sub>10</sub> (1/n · Σ 1/y²) · kombinasi <strong>A₂B₂</strong> paling tangguh</p>
+</div>
+
+<style>
+  .taguchi-mini { margin-top: .85rem; }
+  /* Tabel tetap bisa digulir di layar sempit agar tidak memicu scroll horizontal halaman. */
+  .mini-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .taguchi-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: .4rem; margin-bottom: .45rem; }
+  .taguchi-head .mono { font-size: .63rem; color: var(--ink-soft); }
+  .taguchi-mode { font-size: .58rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft); padding: .2rem .5rem; border-radius: var(--radius-pill); }
+  .taguchi-table { font-size: .67rem; }
+  .taguchi-table th, .taguchi-table td { padding: .4rem .42rem; white-space: nowrap; }
+  .taguchi-table thead th { font-size: .6rem; }
+  .taguchi-table tbody th { font-family: var(--font-mono); font-weight: 600; text-align: left; }
+  .taguchi-table td:nth-child(2), .taguchi-table td:nth-child(3) {
+    font-family: var(--font-ui); font-size: .63rem; color: var(--ink-soft); }
+  .taguchi-table .is-best { background: rgba(31, 169, 113, .12); }
+  .taguchi-table .is-best th, .taguchi-table .is-best td { color: #0d6b49; }
+  .sn-value { font-weight: 700; }
+  .best-star { margin-left: .25rem; font-size: .7rem; }
+  .taguchi-note { margin-top: .65rem; font-size: .68rem; color: var(--ink-soft); }
+</style>

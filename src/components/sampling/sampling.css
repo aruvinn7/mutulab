@@ -1,0 +1,112 @@
+/* Acceptance Sampling — bento cards & grafik SVG */
+.sp-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap-bento); }
+.sp-grid > .span-3 { grid-column: span 3; }
+.sp-grid > .span-4 { grid-column: span 4; }
+.sp-grid > .span-5 { grid-column: span 5; }
+.sp-grid > .span-6 { grid-column: span 6; }
+.sp-grid > .span-7 { grid-column: span 7; }
+.sp-grid > .span-8 { grid-column: span 8; }
+.sp-grid > .span-12 { grid-column: span 12; }
+
+.sp-card {
+  --sp-surface: rgba(255, 255, 255, 0.95);
+  background: var(--sp-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--surface-shadow);
+  padding: 1.1rem 1.2rem;
+  min-width: 0;
+}
+.sp-card-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem; margin-bottom: .8rem; }
+.sp-card-title { font-family: var(--font-display); font-size: calc(1.05rem * var(--teach-scale)); color: var(--ink); }
+.sp-tag { font-size: var(--fs-micro); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.sp-note { font-size: var(--fs-small); color: var(--ink); line-height: 1.6; margin-top: .6rem; }
+
+.sp-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.sp-field { display: grid; gap: .35rem; min-width: 0; }
+.sp-field label, .sp-label { font-size: var(--fs-micro); font-weight: 700; color: var(--ink); }
+.sp-field input, .sp-field select {
+  width: 100%; min-width: 0; min-height: 44px;
+  background: #fff; border: 1px solid var(--surface-border);
+  border-radius: 12px; padding: .55rem .7rem; font-size: var(--fs-small); font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums; color: var(--ink);
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.sp-field input:hover:not(:disabled), .sp-field select:hover:not(:disabled) { border-color: var(--mtn-mid); }
+.sp-field input:focus-visible, .sp-field select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.sp-field input:disabled, .sp-field select:disabled { background: var(--surface-soft); color: var(--ink-soft); opacity: .65; cursor: not-allowed; }
+.sp-seg { display: flex; gap: .35rem; margin-top: .4rem; }
+.sp-seg button {
+  flex: 1; min-height: 44px;
+  border: 1px solid var(--surface-border); background: #fff; color: var(--ink);
+  border-radius: var(--radius-pill); padding: .5rem; font-size: var(--fs-small); font-weight: 700;
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+.sp-seg button:hover:not([aria-pressed='true']):not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+.sp-seg button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.sp-seg button:active:not(:disabled) { transform: translateY(1px); }
+.sp-seg button:disabled { opacity: .5; cursor: not-allowed; }
+.sp-seg button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 6px 16px rgba(36,89,224,.26); }
+
+.sp-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: .7rem; }
+.sp-kpi { background: var(--surface); border: 1px solid var(--surface-border);
+  border-radius: 16px; padding: .8rem .9rem; }
+.sp-kpi span { display: block; font-size: var(--fs-micro); color: var(--ink); font-weight: 700; }
+.sp-kpi strong { display: block; margin-top: .3rem; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: calc(1.2rem * var(--teach-scale)); color: var(--accent); }
+.sp-kpi[data-tone='ok'] strong { color: #0d6b49; }
+.sp-kpi[data-tone='danger'] strong { color: #a5161b; }
+.sp-kpi[data-tone='warn'] strong { color: #8a5700; }
+
+.sp-decision { display: flex; flex-wrap: wrap; align-items: center; gap: .8rem; padding: .9rem 1rem; border-radius: 16px;
+  background: rgba(31,169,113,.12); border: 1px solid rgba(31,169,113,.28); margin-top: .9rem; }
+.sp-decision[data-tone='reject'] { background: rgba(229,72,77,.11); border-color: rgba(229,72,77,.28); }
+.sp-decision strong { font-family: var(--font-display); font-size: calc(1.15rem * var(--teach-scale)); color: #0d6b49; }
+.sp-decision[data-tone='reject'] strong { color: #a5161b; }
+.sp-decision p { font-size: var(--fs-small); color: var(--ink); line-height: 1.55; }
+
+/* Kartu grafik putih solid; label cukup besar & mengikuti Mode Mengajar. */
+.sp-chart {
+  width: 100%; height: auto; display: block;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+}
+.sp-chart text { font-family: var(--font-mono); font-size: calc(11px * var(--teach-scale)); }
+.sp-chart-hit { cursor: crosshair; }
+.sp-chart-hit:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.sp-tooltip rect { fill: var(--ink); opacity: .94; }
+.sp-tooltip text { fill: #fff; font-family: var(--font-mono); font-size: calc(12px * var(--teach-scale)); }
+.sp-legend { display: flex; flex-wrap: wrap; gap: .85rem; font-size: var(--fs-small); color: var(--ink); margin-top: .6rem; }
+.sp-legend-item { display: inline-flex; align-items: center; gap: .4rem; }
+.sp-swatch { width: 13px; height: 13px; display: inline-block; border-radius: 3px; flex-shrink: 0; }
+
+.sp-formula-box { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 14px; padding: .6rem .8rem;
+  overflow-x: auto; margin: .5rem 0; }
+.sp-hint { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 8px;
+  padding: .7rem .85rem; font-size: var(--fs-small); color: var(--ink); line-height: 1.6; }
+.sp-hint[data-tone='warn'] { background: rgba(245,165,36,.16); border-left-color: var(--warn); }
+.sp-warn { background: rgba(245,165,36,.16); border: 1px solid rgba(245,165,36,.4); border-radius: 12px;
+  padding: .7rem .85rem; font-size: var(--fs-small); color: #7a4d00; line-height: 1.55; margin-bottom: .8rem; }
+
+@media (max-width: 1023px) {
+  .sp-grid > .span-3, .sp-grid > .span-4, .sp-grid > .span-5, .sp-grid > .span-6, .sp-grid > .span-7, .sp-grid > .span-8 { grid-column: span 6; }
+}
+@media (max-width: 639px) {
+  .sp-grid { grid-template-columns: minmax(0, 1fr); }
+  .sp-grid > * { grid-column: 1 / -1; }
+  .sp-controls { grid-template-columns: 1fr; }
+}
+
+/* Mode Mengajar: permukaan solid, tanpa bayangan/efek dekoratif. */
+html[data-teaching='true'] .sp-card { --sp-surface: #fff; box-shadow: none; }
+html[data-teaching='true'] .sp-kpi,
+html[data-teaching='true'] .sp-chart,
+html[data-teaching='true'] .sp-formula-box,
+html[data-teaching='true'] .sp-decision { background: #fff; box-shadow: none; }
+html[data-teaching='true'] .sp-seg button[aria-pressed='true'],
+html[data-teaching='true'] .sp-seg button:hover { box-shadow: none; transform: none; }
+
+@media (prefers-contrast: more) {
+  .sp-card { --sp-surface: #fff; }
+}

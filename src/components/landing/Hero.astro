@@ -1,0 +1,174 @@
+---
+import Spotlight from '../effects/Spotlight.astro';
+import PreviewWindow from './PreviewWindow.astro';
+
+const headlineLines = [
+  { text: 'Pahami eksperimen.', italic: false },
+  { text: 'Rancang kualitasnya.', italic: true },
+];
+let wordIndex = 0;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <Spotlight />
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <div class="hero-inner container-wide">
+    <div class="hero-copy glass-panel">
+      <p class="hero-eyebrow">Design of Experiments · Taguchi · Acceptance Sampling</p>
+      <h1 id="hero-title" class="serif hero-title hero-title--reveal" aria-label="Pahami eksperimen. Rancang kualitasnya.">
+        {headlineLines.map((line) => (
+          <span class:list={['title-line', { 'title-em': line.italic }]} aria-hidden="true">
+            {line.text.split(' ').map((word) => {
+              const delay = wordIndex++ * 70 + 120;
+              return <span class="reveal-word" style={`animation-delay:${delay}ms`}>{word}{'\u00a0'}</span>;
+            })}
+          </span>
+        ))}
+      </h1>
+      <p class="hero-sub">
+        Mulai dari intuisi variasi hingga ANOVA, faktorial 2ᵏ, dan metode Taguchi —
+        semua dalam satu tempat untuk belajar mandiri maupun mengajar di kelas.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary btn-hero" href="/modul/">
+          Mulai Belajar
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </a>
+        <button id="hero-teach" class="btn btn-hero-secondary" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
+            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2.5" y="4" width="19" height="13" rx="2" /><path d="M8 20h8M12 17v3" />
+          </svg>
+          <span class="teach-text">Buka Mode Mengajar</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="preview-spotlight" id="preview-spotlight">
+      <span class="preview-spotlight__light" aria-hidden="true"></span>
+      <PreviewWindow />
+    </div>
+  </div>
+
+</section>
+
+<script>
+  // Spotlight pengikut pointer (versi ringkas, tanpa React island).
+  const spotlightHost = document.getElementById('preview-spotlight');
+  if (spotlightHost && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    spotlightHost.addEventListener('pointermove', (event) => {
+      if (document.documentElement.dataset.teaching === 'true') return;
+      const rect = spotlightHost.getBoundingClientRect();
+      spotlightHost.style.setProperty('--sx', `${event.clientX - rect.left}px`);
+      spotlightHost.style.setProperty('--sy', `${event.clientY - rect.top}px`);
+      spotlightHost.style.setProperty('--s-opacity', '1');
+    });
+    spotlightHost.addEventListener('pointerleave', () => {
+      spotlightHost.style.setProperty('--s-opacity', '0');
+    });
+  }
+
+  // Tombol Mode Mengajar di hero memakai state yang sama dengan Topbar.
+  const root = document.documentElement;
+  const teachBtn = document.getElementById('hero-teach');
+
+  function reflect(active: boolean) {
+    if (!teachBtn) return;
+    teachBtn.setAttribute('aria-pressed', String(active));
+    teachBtn.classList.toggle('is-active', active);
+    const label = teachBtn.querySelector('.teach-text');
+    if (label) label.textContent = active ? 'Mode Mengajar Aktif' : 'Buka Mode Mengajar';
+  }
+
+  reflect(root.dataset.teaching === 'true');
+
+  teachBtn?.addEventListener('click', () => {
+    const active = root.dataset.teaching !== 'true';
+    root.dataset.teaching = active ? 'true' : 'false';
+    try { localStorage.setItem('mutulab.teaching', active ? '1' : '0'); } catch {}
+    try { sessionStorage.setItem('mutulab.reveal.reset', '1'); } catch {}
+    // Topbar mendengarkan sinkronisasi ini lalu memancarkan `mutulab:teaching`.
+    window.dispatchEvent(new Event('mutulab:teaching:sync'));
+    reflect(active);
+  });
+
+  window.addEventListener('mutulab:teaching', (event: Event) => {
+    const detail = (event as CustomEvent).detail;
+    reflect(Boolean(detail?.active));
+  });
+</script>
+
+<style>
+  .hero { position: relative; isolation: isolate; min-height: 820px;
+    margin-top: -76px; padding-top: 76px; background: transparent; }
+  .preview-spotlight { border-radius: var(--radius-window); position: relative; isolation: isolate; }
+  .preview-spotlight__light {
+    position: absolute; inset: 0; z-index: 0; border-radius: inherit; pointer-events: none;
+    opacity: var(--s-opacity, 0);
+    background: radial-gradient(420px circle at var(--sx, 50%) var(--sy, 50%),
+      rgba(120, 165, 255, .22), rgba(120, 165, 255, .08) 38%, transparent 72%);
+    transition: opacity .25s cubic-bezier(.23, 1, .32, 1);
+  }
+  .preview-spotlight > :not(.preview-spotlight__light) { position: relative; z-index: 1; }
+  html[data-teaching='true'] .preview-spotlight__light { display: none; }
+  .hero-glow { position: absolute; z-index: -1; inset: 0 0 auto; height: 620px; pointer-events: none;
+    background: radial-gradient(60% 42% at 50% 24%, rgba(255,255,255,.22), transparent 72%); }
+  .hero-inner { position: relative; z-index: 1; padding: 0 1.25rem; }
+
+  /* Kaca gelap: foto tetap tampak, teks putih tetap kontras. */
+  .hero-copy.glass-panel {
+    width: min(920px, 100%); margin-inline: auto; text-align: center;
+    padding: clamp(1.9rem, 3vw, 2.9rem) 1.75rem 2rem;
+    background: linear-gradient(135deg, rgba(10, 34, 88, .62), rgba(6, 24, 66, .34) 58%, rgba(12, 40, 96, .46));
+    border-color: rgba(255,255,255,.42);
+    box-shadow: 0 32px 80px rgba(4, 20, 64, .34),
+      inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(255,255,255,.12);
+  }
+  .hero-copy.glass-panel::before { background: radial-gradient(ellipse at 30% 10%, rgba(255,255,255,.22), transparent 60%); }
+  .hero-eyebrow { color: rgba(255,255,255,.86); font-size: .68rem; font-weight: 600;
+    letter-spacing: .2em; text-transform: uppercase; text-shadow: 0 1px 12px rgba(16,42,110,.3); }
+  .hero-title { margin-top: 1.1rem; color: #fff; font-size: clamp(3.2rem, 7.2vw, 6rem);
+    line-height: .97; letter-spacing: -.038em; text-shadow: 0 8px 34px rgba(16,42,110,.24); }
+  .title-line { display: block; font-weight: 400; }
+  .title-em { font-style: italic; font-size: 1.04em; letter-spacing: -.045em;
+    -webkit-text-stroke: .55px rgba(255,255,255,.96);
+    text-shadow: 0 2px 2px rgba(16,42,110,.12), 0 10px 36px rgba(16,42,110,.26); }
+  .hero-sub { max-width: 62ch; margin: 1.35rem auto 0; color: rgba(255,255,255,.94);
+    font-size: clamp(.95rem, 1.45vw, 1.12rem); line-height: 1.65;
+    text-shadow: 0 2px 16px rgba(16,42,110,.28); }
+
+  .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: 1.9rem; }
+  .btn-hero { padding: .92rem 1.7rem; font-size: .9rem; }
+  .btn-hero-secondary { background: rgba(255,255,255,.13); color: #fff;
+    border-color: rgba(255,255,255,.5); backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); padding: .92rem 1.5rem; font-size: .9rem; }
+  .btn-hero-secondary:hover { background: #fff; color: var(--ink); border-color: #fff; }
+  .btn-hero-secondary.is-active { background: #fff; color: var(--ink); }
+
+  @media (max-width: 1023px) {
+    .hero { min-height: 820px; }
+    .hero-title { font-size: clamp(3rem, 8.6vw, 5.6rem); }
+  }
+  @media (max-width: 639px) {
+    .hero { min-height: auto; margin-top: -70px; padding-top: 70px; padding-bottom: 90px; }
+    .hero-copy { padding-top: 1.6rem; }
+    .hero-eyebrow { font-size: .58rem; letter-spacing: .12em; }
+    .hero-title { font-size: clamp(2.65rem, 11vw, 3.9rem); margin-top: .9rem; }
+    .hero-sub { font-size: .92rem; margin-top: 1.2rem; }
+    .hero-actions { margin-top: 1.6rem; gap: .6rem; }
+    .btn-hero, .btn-hero-secondary { padding: .78rem 1.2rem; font-size: .84rem; }
+  }
+  html[data-teaching='true'] .hero {
+    background: linear-gradient(180deg, var(--sky-horizon), var(--surface-soft) 74%);
+  }
+  html[data-teaching='true'] .hero-title { color: var(--ink); text-shadow: none; -webkit-text-stroke: 0; }
+  html[data-teaching='true'] .title-em { color: var(--ink); -webkit-text-stroke: 0; text-shadow: none; }
+  html[data-teaching='true'] .hero-eyebrow,
+  html[data-teaching='true'] .hero-sub { color: var(--ink); text-shadow: none; }
+  html[data-teaching='true'] .btn-hero-secondary { background: #fff; color: var(--ink); border-color: var(--ink); }
+</style>

@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+---
+
+<section class="section closing" aria-labelledby="closing-title">
+  <div class="container">
+    <div class="closing-panel glass">
+      <div class="closing-copy">
+        <p class="eyebrow">Jalur belajar</p>
+        <h2 id="closing-title" class="serif">Eksperimen berikutnya <em>mulai dari sini.</em></h2>
+        <p>Materi disusun dari fondasi eksperimen hingga Taguchi dan acceptance sampling.</p>
+      </div>
+      <div class="closing-actions">
+        <a class="btn btn-primary" href="/modul/fondasi-berpikir-eksperimental/">
+          Mulai Modul 1 <Icon name="arrow" size={16} />
+        </a>
+        <a class="btn closing-secondary" href="/kalkulator/">Jelajahi Kalkulator</a>
+      </div>
+      <svg class="closing-ridge" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 96 L120 70 L230 90 L350 52 L470 84 L590 62 L710 94 L840 58 L960 88 L1080 64 L1200 92 L1200 120 L0 120 Z" fill="var(--mtn-far)" opacity=".28" />
+        <path d="M0 108 L150 92 L290 106 L430 82 L560 108 L700 90 L850 110 L990 88 L1200 108 L1200 120 L0 120 Z" fill="var(--mtn-mid)" opacity=".22" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Seksi transparan: foto tampak di sekeliling panel kaca CTA. */
+  .closing { background: transparent; padding-bottom: clamp(3rem, 6vw, 5.5rem); }
+  .closing-panel { position: relative; overflow: hidden; border-radius: var(--radius-window);
+    padding: clamp(2.2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4.5rem) clamp(3.2rem, 6vw, 5rem);
+    background: rgba(255,255,255,.86); backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%); text-align: center; }
+  .closing-copy { position: relative; z-index: 1; max-width: 700px; margin-inline: auto; }
+  .closing .eyebrow { color: var(--accent); }
+  .closing h2 { font-size: var(--fs-h2); line-height: 1.08; letter-spacing: -.035em; margin-top: .85rem; }
+  .closing h2 em { font-style: italic; color: var(--accent); }
+  .closing-copy p:last-child { margin-top: 1rem; color: var(--ink-soft); font-size: var(--fs-small); line-height: 1.7; }
+  .closing-actions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; justify-content: center;
+    gap: .75rem; margin-top: 2rem; }
+  .closing-actions .btn { padding: .85rem 1.5rem; }
+  .closing-secondary { background: #fff; border-color: var(--surface-border); color: var(--ink); }
+  .closing-secondary:hover { box-shadow: 0 10px 26px rgba(16,42,110,.12); }
+  .closing-ridge { position: absolute; bottom: -1px; left: 0; width: 100%; height: 110px; opacity: .9; }
+  @media (max-width: 639px) {
+    .closing-ridge { height: 70px; }
+  }
+  html[data-teaching='true'] .closing-panel { background: #fff; }
+</style>

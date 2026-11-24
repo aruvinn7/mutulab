@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TeachingPanel from '../components/teaching/TeachingPanel';
+import TeachingBadge from '../components/teaching/TeachingBadge';
+---
+
+<BaseLayout
+  title="Panduan Penggunaan — MutuLab"
+  description="Panduan MutuLab: Mode Mengajar dan Board Reveal, preset studi kasus, berbagi tautan, cadangan JSON, dan penyimpanan data di browser."
+  wide
+>
+  <header class="page-intro guide-intro glass-solid">
+    <p class="eyebrow">Panduan penggunaan</p>
+    <h1 class="serif">Dari pertama buka sampai <em>presentasi kelas.</em></h1>
+    <p class="lead">
+      Halaman ini merangkum alur utama MutuLab, dari memilih modul hingga menyiapkan presentasi untuk dosen dan asisten praktikum.
+    </p>
+    <div class="intro-chips">
+      <TeachingBadge client:load />
+    </div>
+  </header>
+
+  <div class="bento guide-grid">
+    <section class="span-4 guide-card card">
+      <p class="eyebrow">01 · Mulai cepat</p>
+      <h2 class="serif">Tiga langkah pertama</h2>
+      <ol class="guide-steps">
+        <li><strong>Buka peta belajar.</strong> Pilih modul 0–5 sesuai kebutuhan; setiap modul punya enam tahap yang berurutan.</li>
+        <li><strong>Coba kalkulator.</strong> Input divalidasi, lalu rumus, substitusi, tabel, dan keputusan tampil bertahap.</li>
+        <li><strong>Latih dengan seed.</strong> Buka <a href="/latihan/"> bank latihan soal </a> dan bagikan tautan seed ke teman diskusi.</li>
+      </ol>
+    </section>
+
+    <section class="span-4 guide-card card">
+      <p class="eyebrow">02 · Navigasi</p>
+      <h2 class="serif">Pindah cepat</h2>
+      <ul class="guide-links">
+        <li><a href="/modul/"><span>Modul belajar</span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="/kalkulator/"><span>kalkulator DOE & Taguchi</span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="/simulator/"><span>Simulator intuisi</span><span aria-hidden="true">↗</span></a></li>
+        <li><a href="/cheat-sheet/"><span>Cheat sheet & tabel F</span><span aria-hidden="true">↗</span></a></li>
+      </ul>
+      <p class="guide-hint">Tekan <kbd>/</kbd> untuk membuka pencarian kapsul di bilah atas.</p>
+    </section>
+
+    <section class="span-4 guide-card card" data-hide-when-teaching>
+      <p class="eyebrow">03 · Progres pribadi</p>
+      <h2 class="serif">Penyimpanan lokal</h2>
+      <p class="guide-body">
+        Tahap yang selesai, bookmark, dan riwayat latihan memakai <code class="mono">localStorage</code> dengan kunci berversi <code class="mono">mutulab.v1</code>.
+        Data ini <strong>tidak dikirim ke server</strong>.
+      </p>
+      <p class="guide-body">
+        Ekspor cadangan JSON dari halaman <a href="/privasi/">Privasi</a>, lalu impor lagi di perangkat lain. Berkas cadangan divalidasi sebelum diterima.
+      </p>
+      <p class="guide-warn">Peringatan: membersihkan data/cookie browser atau memakai mode privat akan menghapus progres dan preferensi Anda.</p>
+    </section>
+
+    <section class="span-12 guide-section">
+      <div class="guide-section-head glass-solid">
+        <div>
+          <p class="eyebrow">F-02 · Mode Mengajar</p>
+          <h2 class="serif">Presentasi tanpa <em>ribet.</em></h2>
+        </div>
+        <p class="guide-section-lead">
+          Aktifkan dari tombol di bilah atas atau tekan <kbd>P</kbd>. Tipografi, rumus KaTeX, label grafik, dan sel tabel membesar 25%; panel kaca jadi lebih opak, blur dan animasi dimatikan.
+        </p>
+      </div>
+      <TeachingPanel client:load />
+    </section>
+
+    <section class="span-6 guide-card card">
+      <p class="eyebrow">Board Reveal · keyboard</p>
+      <h2 class="serif">Buka langkah satu per satu</h2>
+      <div class="guide-keys">
+        <div><kbd>→</kbd><kbd>Spasi</kbd><kbd>PageDown</kbd><span>Buka langkah berikutnya</span></div>
+        <div><kbd>←</kbd><kbd>PageUp</kbd><span>Tutup langkah terakhir</span></div>
+        <div><kbd>P</kbd><span>Nyalakan / matikan Mode Mengajar</span></div>
+        <div><kbd>/</kbd><span>Fokus ke pencarian</span></div>
+      </div>
+      <p class="guide-body">
+        Tombol <strong>Buka Semua</strong> menampilkan seluruh langkah sekaligus; <strong>Reset</strong> mengembalikan ke awal. Posisi langkah memakai <code class="mono">sessionStorage</code> selama tab dibuka, sehingga tetap ada setelah refresh, tetapi tidak ikut terbawa saat tautan dibagikan.
+      </p>
+      <p class="guide-hint">Clicker presentasi biasanya mengirim PageDown/PageUp — kombinasi ini sudah didukung.</p>
+    </section>
+
+    <section class="span-6 guide-card card">
+      <p class="eyebrow">Preset & berbagi</p>
+      <h2 class="serif">Satu klik untuk seluruh kelas</h2>
+      <p class="guide-body">
+        Setiap modul menyediakan minimal tiga preset studi kasus: kasus dasar, kasus dengan efek nyata, serta kasus interaksi kuat atau pelanggaran asumsi. Memilih preset dari dropdown pada kartu kalkulator langsung mengisi semua input.
+      </p>
+      <p class="guide-body">
+        Tombol <strong>Pertanyaan pemantik</strong> membuka panel diskusi 2–3 pertanyaan per preset—cocok untuk menguji pemahaman sebelum angka-angka dibuka.
+      </p>
+      <p class="guide-body">
+        Untuk berbagi, salin tautan kalkulator/simulator (state disandikan di parameter URL) atau tautan latihan dengan parameter <code class="mono">?seed=…</code>. Data divalidasi saat dibuka; parameter rusak ditolak tanpa merusak halaman.
+      </p>
+      <div class="ref-links">
+        <a class="btn btn-primary" href="/latihan/">Buka latihan</a>
+        <a class="btn btn-ghost" href="/cheat-sheet/">Cheat sheet</a>
+      </div>
+    </section>
+
+    <section class="span-12 guide-card card pwa-card">
+      <div>
+        <p class="eyebrow">F-11 · Cangkang aplikasi (PWA)</p>
+        <h2 class="serif">Penyimpanan cangkang aplikasi</h2>
+        <p class="guide-body">
+          Service worker menyimpan cangkang aplikasi, font, KaTeX, modul, dan kalkulator setelah kunjungan pertama. Halaman yang sudah dimuat dapat dibuka kembali tanpa koneksi. Ekspor dan analytics tidak tersedia saat tanpa koneksi.
+        </p>
+      </div>
+      <span class="chip" data-tone="ok">Service worker</span>
+    </section>
+  </div>
+
+  <footer class="guide-footer glass-solid">
+    <p>Masalah atau pertanyaan? Baca <a href="/privasi/">kebijakan privasi</a> dan <a href="/cheat-sheet/">referensi rumus</a>.</p>
+  </footer>
+</BaseLayout>
+
+<style is:global>
+  .guide-intro { max-width: 820px; margin: 0 auto 2.4rem; text-align: center;
+    padding: clamp(1.5rem, 4vw, 2.5rem); border-radius: var(--radius-window); }
+  .guide-intro h1 { font-size: var(--fs-h1); margin: .3rem 0 .8rem; }
+  .guide-intro .lead { color: var(--ink-soft); line-height: 1.7; }
+  .intro-chips { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center; align-items: center; margin-top: 1.2rem; }
+  .guide-grid { align-items: start; }
+  .guide-card { padding: 1.45rem 1.55rem; }
+  .guide-card h2 { font-size: var(--fs-h3); margin: .35rem 0 .9rem; }
+  .guide-steps { list-style: none; counter-reset: gs; display: grid; gap: .8rem; }
+  .guide-steps li { counter-increment: gs; position: relative; padding-left: 1.9rem; font-size: var(--fs-small); line-height: 1.6; color: var(--ink-soft); }
+  .guide-steps li::before { content: counter(gs); position: absolute; left: 0; top: .1rem; width: 1.35rem; height: 1.35rem; border-radius: 50%;
+    display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: var(--fs-micro); font-weight: 700; }
+  .guide-body { font-size: var(--fs-small); line-height: 1.7; color: var(--ink-soft); margin-bottom: .8rem; }
+  .guide-body a, .guide-footer a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .guide-hint { font-size: var(--fs-micro); color: var(--ink-soft); margin-top: .7rem; }
+  .guide-warn { font-size: var(--fs-micro); line-height: 1.6; padding: .7rem .85rem; border-radius: 12px; background: rgba(245,165,36,.12); color: #8a5700; }
+  .guide-links { list-style: none; display: grid; gap: .4rem; }
+  .guide-links a { display: flex; justify-content: space-between; gap: .8rem; padding: .6rem .8rem; border-radius: 12px;
+    background: var(--surface-soft); font-size: var(--fs-small); font-weight: 600; }
+  .guide-links a:hover { color: var(--accent); }
+  .guide-section { display: grid; gap: 1.2rem; }
+  .guide-section-head { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; justify-content: space-between;
+    padding: 1.15rem 1.35rem; border-radius: var(--radius-card); }
+  .guide-section-head h2 { font-size: var(--fs-h2); margin-top: .3rem; }
+  .guide-section-lead { max-width: 60ch; font-size: var(--fs-small); line-height: 1.7; color: var(--ink-soft); }
+  .guide-keys { display: grid; gap: .6rem; margin-bottom: 1rem; }
+  .guide-keys > div { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; font-size: var(--fs-small); color: var(--ink-soft); }
+  .guide-keys span { margin-left: .4rem; }
+  kbd { font-family: var(--font-mono); font-size: var(--fs-micro); border: 1px solid var(--surface-border); border-bottom-width: 2px;
+    border-radius: 6px; padding: .12rem .42rem; background: #fff; color: var(--ink); }
+  .ref-links { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.1rem; }
+  .pwa-card { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; }
+  .pwa-card > div { max-width: 85ch; }
+  .guide-footer { text-align: center; margin: 2.4rem auto 0; font-size: var(--fs-small); color: var(--ink-soft);
+    width: fit-content; max-width: 100%; padding: .75rem 1.25rem; border-radius: var(--radius-pill); }
+
+  /* --- Demo Mode Mengajar --- */
+  .tp-demo { display: grid; gap: 1rem; }
+  .tp-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; padding: .8rem 1rem; border-radius: var(--radius-card); }
+  .tp-toolbar .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .teach-badge { display: inline-flex; align-items: center; gap: .35rem; }
+  .tp-scale-demo { padding: 1.25rem 1.4rem; }
+  .tp-sample { font-family: var(--font-display); font-size: calc(var(--fs-h3) * 1.15); margin: .5rem 0 .3rem; }
+  .tp-sample em { font-style: italic; }
+  .tp-scale-demo .formula-block { background: var(--surface-soft); border-radius: 12px; padding: .6rem .9rem; overflow-x: auto; }
+  .tp-note { font-size: var(--fs-micro); line-height: 1.6; margin-top: .6rem; }
+  .tp-reveal > .eyebrow, .tp-preset > .eyebrow {
+    display: inline-block; margin-bottom: .6rem; padding: .4rem .8rem;
+    border-radius: var(--radius-pill); background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+  }
+  .preset-hint { overflow: hidden; }
+  .ph-toggle { width: 100%; display: flex; align-items: center; gap: .65rem; text-align: left; border: 0; background: transparent;
+    padding: .9rem 1.1rem; font-size: var(--fs-small); }
+  .ph-toggle:hover { background: var(--surface-soft); }
+  .ph-icon { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; flex-shrink: 0;
+    background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .ph-caret { margin-left: auto; font-size: 1.2rem; color: var(--accent); }
+  .ph-body { padding: 0 1.1rem 1.1rem; border-top: 1px solid var(--surface-border); }
+  .ph-goal { font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.6; margin: .9rem 0 .6rem; }
+  .ph-list { list-style: none; display: grid; gap: .45rem; counter-reset: ph; }
+  .ph-list li { counter-increment: ph; position: relative; padding-left: 1.5rem; font-size: var(--fs-small); line-height: 1.6; }
+  .ph-list li::before { content: counter(ph) '.'; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+</style>

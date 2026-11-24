@@ -1,0 +1,14 @@
+{
+  "name": "MutuLab — Belajar DOE, Taguchi & Acceptance Sampling",
+  "short_name": "MutuLab",
+  "description": "Platform belajar dan media ajar interaktif Design of Experiments, Taguchi, dan Acceptance Sampling. Gratis, tanpa login, bisa offline.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#cfe6ff",
+  "theme_color": "#1f5eff",
+  "lang": "id",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

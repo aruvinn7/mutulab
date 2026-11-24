@@ -1,0 +1,108 @@
+/* MutuLab Design Tokens — Sky-Blue Frosted Glass × Mountain × Bento (PRD v1.4 §6.3) */
+:root {
+  /* Langit */
+  --sky-top: #1f5eff;
+  --sky-mid: #4c8dff;
+  --sky-horizon: #cfe6ff;
+
+  /* Pegunungan (jauh -> dekat) */
+  --mtn-far: #a9c7f2;
+  --mtn-mid: #6f9be0;
+  --mtn-near: #3a66b8;
+  --mtn-front: #1f3f85;
+  --hill-green: #7db36a;
+  --mist: rgba(255, 255, 255, 0.55);
+
+  /* Kaca */
+  --glass-bg: rgba(255, 255, 255, 0.24);
+  --glass-bg-strong: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.58);
+  --glass-blur: 28px;
+  --glass-shadow: 0 24px 64px rgba(12, 40, 100, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16);
+
+  /* Teks & aksen */
+  --ink: #0b1b3a;
+  --ink-soft: #4a5b7c;
+  --on-sky: #ffffff;
+  --accent: #2459e0;   /* 5,87:1 di atas putih; 4,76:1 di atas accent-soft */
+  --accent-soft: #dce8ff;
+  --cta: #0a0a0a;
+  --ok: #1fa971;
+  --warn: #f5a524;
+  --danger: #e5484d;
+
+  /* Permukaan netral */
+  --surface: #ffffff;
+  --surface-soft: #f5f8ff;
+  --surface-border: #e2eafb;
+  --surface-shadow: 0 12px 36px rgba(16, 42, 110, 0.08);
+
+  /* Bentuk */
+  --radius-window: 28px;
+  --radius-card: 20px;
+  --radius-pill: 999px;
+  --gap-bento: 16px;
+
+  /* Tipografi */
+  --font-display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --font-ui: 'Manrope', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  /* Angka memakai font UI yang sama dengan tabular-nums; tanpa font monospace. */
+  --font-mono: var(--font-ui);
+
+  /* Skala tipografi (dipakai Mode Mengajar lewat --teach-scale) */
+  --teach-scale: 1;
+  --fs-hero: clamp(3rem, 7.2vw, 6.75rem);
+  --fs-h1: calc(clamp(2.25rem, 4.4vw, 3.75rem) * var(--teach-scale));
+  --fs-h2: calc(clamp(1.75rem, 3vw, 2.5rem) * var(--teach-scale));
+  --fs-h3: calc(1.25rem * var(--teach-scale));
+  --fs-body: calc(1rem * var(--teach-scale));
+  --fs-small: calc(0.875rem * var(--teach-scale));
+  --fs-micro: calc(0.75rem * var(--teach-scale));
+}
+
+/* Mode Mengajar / Proyektor — PRD §6.8 & F-02 */
+html[data-teaching='true'] {
+  --teach-scale: 1.25;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-bg-strong: rgba(255, 255, 255, 0.96);
+  --glass-border: rgba(28, 62, 130, 0.16);
+  --glass-blur: 0px;
+  --glass-shadow: 0 8px 24px rgba(16, 42, 110, 0.1);
+  --ink: #071635;
+  --ink-soft: #21345c;
+  --accent-soft: #cddfff;
+}
+
+html[data-teaching='true'] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Preferensi sistem */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.94);
+    --glass-border: rgba(28, 62, 130, 0.18);
+    --glass-blur: 0px;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --glass-bg: #ffffff;
+    --ink-soft: #27395c;
+    --glass-border: rgba(11, 27, 58, 0.35);
+  }
+}

@@ -1,0 +1,37 @@
+---
+/**
+ * Diadaptasi dari Aceternity UI "Spotlight" (MIT, Manu Arora).
+ * Versi ini memakai CSS keyframes, bukan dependency `motion`, dan memakai
+ * token warna MutuLab, sehingga tetap ringan & kompatibel dengan Astro.
+ */
+interface Props { class?: string; fill?: string }
+const { class: className = '', fill = '#ffffff' } = Astro.props;
+---
+
+<svg class:list={['ac-spotlight', className]} viewBox="0 0 3787 2842" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#ac-spotlight-blur)">
+    <ellipse cx="1924.71" cy="273.501" rx="1924.71" ry="273.501"
+      transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)"
+      fill={fill} fill-opacity="0.17"></ellipse>
+  </g>
+  <defs>
+    <filter id="ac-spotlight-blur" x="0.86" y="0.84" width="3785" height="2840"
+      filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="151"></feGaussianBlur>
+    </filter>
+  </defs>
+</svg>
+
+<style>
+  .ac-spotlight {
+    position: absolute; z-index: -1; pointer-events: none;
+    width: 138%; height: 169%; left: -19%; top: -28%;
+    opacity: 0; mix-blend-mode: screen;
+    animation: ac-spotlight-in 1.6s cubic-bezier(0.23, 1, 0.32, 1) .55s forwards;
+  }
+  @keyframes ac-spotlight-in {
+    0% { opacity: 0; transform: translate(-72%, -62%) scale(.5); }
+    100% { opacity: .85; transform: translate(-50%, -40%) scale(1); }
+  }
+  html[data-teaching='true'] .ac-spotlight { display: none; }
+</style>

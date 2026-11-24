@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SamplingCalc from '../../components/calculators/SamplingCalc';
+---
+
+<BaseLayout
+  title="Kalkulator Acceptance Sampling · Kurva OC — MutuLab"
+  description="Rancang rencana sampling tunggal dengan Binomial atau Poisson. Lihat kurva OC interaktif, risiko α/β, AOQ & AOQL, ASN, dan ATI."
+  surface="page"
+  wide
+>
+  <header class="page-head glass-solid">
+    <p class="eyebrow">Kalkulator · Modul 0</p>
+    <h1 class="serif">Terima atau <em>tolak?</em></h1>
+    <p class="lead">
+      Inspeksi lot selalu mengandung risiko. Kurva Operating Characteristic (OC) menunjukkan peluang sebuah lot diterima
+      pada setiap tingkat cacat—sekaligus risiko produsen di AQL dan risiko konsumen di LTPD.
+    </p>
+    <nav class="crumbs" aria-label="Navigasi terkait">
+      <a href="/kalkulator/">← Semua kalkulator</a>
+      <a href="/modul/pengantar-kualitas-sampling/">Baca Modul 0</a>
+      <a href="/simulator/">Simulasi inspeksi ↗</a>
+    </nav>
+  </header>
+
+  <div class="calc-stage">
+    <SamplingCalc client:load />
+  </div>
+
+  <section class="explain" aria-labelledby="explain-title">
+    <div class="explain-card">
+      <p class="eyebrow">Ringkasan konsep</p>
+      <h2 id="explain-title" class="serif">Menyaring cacat bukan mencegahnya</h2>
+      <p>
+        <strong>AQL</strong> (<em>Acceptable Quality Level</em>) adalah proporsi cacat yang masih dianggap wajar; peluang terima
+        di titik ini sebesar 1 − α. <strong>LTPD</strong> (<em>Lot Tolerance Percent Defective</em>) adalah batas mutu yang
+        masih bisa ditoleransi; peluang terima di titik ini adalah β, risiko konsumen.
+      </p>
+      <p>
+        <strong>AOQ</strong> memperkirakan mutu rata-rata barang yang keluar setelah perbaikan, dengan nilai maksimum
+        <strong>AOQL</strong>. <strong>ASN</strong> adalah rata-rata jumlah unit yang diperiksa—pada sampling tunggal selalu sama
+        dengan n. <strong>ATI</strong> memperhitungkan biaya tambahan ketika lot ditolak lalu diperiksa 100%.
+      </p>
+      <div class="explain-links">
+        <a href="/modul/pengantar-kualitas-sampling/">Modul 0 · Pengantar Kualitas</a>
+        <a href="/cheat-sheet/">Referensi rumus sampling</a>
+        <a href="/latihan/">Latihan soal sampling</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head { margin-bottom: 1.8rem; padding: clamp(1.4rem, 3.5vw, 2.2rem); border-radius: var(--radius-window); }
+  .page-head h1 { font-size: var(--fs-h1); margin: .35rem 0 .8rem; color: var(--ink); }
+  .page-head h1 em { color: var(--accent); }
+  .lead { max-width: 72ch; color: var(--ink-soft); font-size: var(--fs-body); line-height: 1.7; }
+  .crumbs { display: flex; flex-wrap: wrap; gap: .6rem 1.1rem; margin-top: 1rem; font-size: var(--fs-small); font-weight: 600; }
+  .crumbs a { color: var(--accent); }
+  .crumbs a:hover { text-decoration: underline; }
+  .calc-stage :global(.calc-window) { background: var(--glass-bg-strong); }
+  .explain { margin-top: 2rem; }
+  .explain-card {
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--surface-shadow);
+    padding: clamp(1.3rem, 3vw, 2.2rem);
+    display: grid;
+    gap: .9rem;
+  }
+  .explain-card h2 { font-size: var(--fs-h2); color: var(--ink); }
+  .explain-card p { max-width: 88ch; color: var(--ink-soft); line-height: 1.75; font-size: var(--fs-small); }
+  .explain-card p strong { color: var(--ink); }
+  .explain-links { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .4rem; }
+  .explain-links a {
+    display: inline-flex; padding: .5rem .9rem; border-radius: var(--radius-pill);
+    background: #fff; border: 1px solid var(--surface-border); color: var(--accent);
+    font-size: var(--fs-micro); font-weight: 700;
+  }
+  .explain-links a:hover { background: var(--accent-soft); }
+</style>

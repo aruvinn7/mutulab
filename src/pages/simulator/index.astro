@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import OfatVsFactorial from '../../components/sandbox/OfatVsFactorial';
+import VarianceDecomposition from '../../components/sandbox/VarianceDecomposition';
+import InteractionPlotSandbox from '../../components/sandbox/InteractionPlotSandbox';
+import LotInspectionSim from '../../components/sandbox/LotInspectionSim';
+---
+
+<BaseLayout
+  title="Laboratorium Virtual — MutuLab"
+  description="Empat simulator interaktif untuk membangun intuisi DOE: OFAT vs faktorial, dekomposisi variansi, plot interaksi, dan inspeksi lot. Geser slider, grafik berubah langsung."
+  surface="page"
+  wide
+>
+  <header class="page-head glass-solid">
+    <p class="eyebrow">Laboratorium virtual · F-05</p>
+    <h1 class="serif">Mainkan dengan <em>angka.</em></h1>
+    <p class="lead">
+      Empat simulator untuk melatih intuisi sebelum masuk ke rumus. Tidak ada tombol “hitung”: geser slider dan grafik
+      berubah seketika. Data acak memakai generator ber-seed, sehingga hasil selalu dapat direproduksi.
+    </p>
+    <nav class="crumbs" aria-label="Navigasi terkait">
+      <a href="/modul/">Jelajahi modul</a>
+      <a href="/kalkulator/taguchi-sn/">Kalkulator Taguchi ↗</a>
+      <a href="/kalkulator/sampling-oc/">Kalkulator Sampling ↗</a>
+    </nav>
+  </header>
+
+  <h2 class="sr-only">Empat simulator interaktif</h2>
+  <div class="sbx-grid">
+    <OfatVsFactorial client:load />
+    <VarianceDecomposition client:load />
+    <InteractionPlotSandbox client:load />
+    <LotInspectionSim client:load />
+  </div>
+
+  <section class="foot-note" aria-label="Catatan penggunaan">
+    <div>
+      <strong>Cara pakai di kelas.</strong> Aktifkan <em>Mode Mengajar</em> pada bilah atas untuk memperbesar teks, lalu geser
+      satu slider pada satu waktu sambil bertanya: “apa yang berubah, dan mengapa?” Karena simulasi berjalan di browser,
+      seluruh perubahan langsung terlihat di proyektor tanpa memuat ulang halaman.
+    </div>
+    <div class="foot-links">
+      <a href="/modul/fondasi-berpikir-eksperimental/">Modul 1 · OFAT</a>
+      <a href="/modul/crd-anova/">Modul 2 · Variansi</a>
+      <a href="/modul/faktorial-2k/">Modul 4 · Interaksi</a>
+      <a href="/modul/pengantar-kualitas-sampling/">Modul 0 · Sampling</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head { margin-bottom: 1.8rem; padding: clamp(1.4rem, 3.5vw, 2.2rem); border-radius: var(--radius-window); }
+  .page-head h1 { font-size: var(--fs-h1); margin: .35rem 0 .8rem; color: var(--ink); }
+  .page-head h1 em { color: var(--accent); }
+  .lead { max-width: 78ch; color: var(--ink-soft); font-size: var(--fs-body); line-height: 1.7; }
+  .crumbs { display: flex; flex-wrap: wrap; gap: .6rem 1.1rem; margin-top: 1rem; font-size: var(--fs-small); font-weight: 600; }
+  .crumbs a { color: var(--accent); }
+  .crumbs a:hover { text-decoration: underline; }
+
+  .foot-note {
+    margin-top: 2rem;
+    background: var(--glass-bg-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--surface-shadow);
+    padding: clamp(1.2rem, 3vw, 1.8rem);
+    display: grid;
+    gap: 1rem;
+    color: var(--ink-soft);
+    font-size: var(--fs-small);
+    line-height: 1.7;
+  }
+  .foot-note strong { color: var(--ink); }
+  .foot-links { display: flex; flex-wrap: wrap; gap: .55rem; }
+  .foot-links a {
+    display: inline-flex; padding: .45rem .85rem; border-radius: var(--radius-pill);
+    background: #fff; border: 1px solid var(--surface-border); color: var(--accent);
+    font-size: var(--fs-micro); font-weight: 700;
+  }
+  .foot-links a:hover { background: var(--accent-soft); }
+</style>

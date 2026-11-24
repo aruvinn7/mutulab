@@ -1,0 +1,58 @@
+---
+/** Mini tabel ANOVA CRD (angka fiktif realistis, konsisten internal). */
+const rows = [
+  { source: 'Perlakuan', ss: '128,472', df: '3', ms: '42,824', f: '7,83', p: '0,0009' },
+  { source: 'Galat', ss: '109,360', df: '20', ms: '5,468', f: '—', p: '—' },
+  { source: 'Total', ss: '237,832', df: '23', ms: '—', f: '—', p: '—' },
+];
+---
+
+<div class="anova-mini">
+  <div class="mini-scroll">
+  <table class="data-table anova-table">
+    <caption class="sr-only">Tabel ANOVA satu arah. Sumber perlakuan: SS 128,472; galat: SS 109,360; total: SS 237,832. F-hitung 7,83 dengan p 0,0009.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Sumber</th>
+        <th scope="col">SS</th>
+        <th scope="col">df</th>
+        <th scope="col">MS</th>
+        <th scope="col">F</th>
+        <th scope="col">p</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((r, i) => (
+        <tr class:list={{ 'is-key': i === 0, 'is-total': i === 2 }}>
+          <th scope="row">{r.source}</th>
+          <td>{r.ss}</td><td>{r.df}</td><td>{r.ms}</td><td>{r.f}</td><td>{r.p}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  </div>
+  <p class="anova-note">
+    <span class="note-dot" aria-hidden="true"></span>
+    SS<sub>Total</sub> = SS<sub>Perlakuan</sub> + SS<sub>Galat</sub> · 3 × 42,824 + 20 × 5,468 = 237,832
+  </p>
+</div>
+
+<style>
+  .anova-mini { margin-top: .85rem; }
+  /* Tabel tetap bisa digulir di layar sempit agar tidak memicu scroll horizontal halaman. */
+  .mini-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .anova-table { font-size: .69rem; line-height: 1.35; }
+  .anova-table th, .anova-table td { padding: .42rem .45rem; white-space: nowrap; }
+  .anova-table thead th { font-size: .6rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft); }
+  .anova-table tbody th { font-family: var(--font-ui); font-weight: 600; text-align: left; font-size: .68rem; }
+  .anova-table .is-key { background: rgba(47, 107, 255, .12); }
+  .anova-table .is-key td, .anova-table .is-key th { color: var(--accent); font-weight: 600; }
+  .anova-table .is-total { border-top: 1px solid var(--surface-border); }
+  .anova-table .is-total th, .anova-table .is-total td { font-weight: 700; }
+  .anova-note { display: flex; align-items: center; gap: .5rem; margin-top: .7rem;
+    font-size: .68rem; color: var(--ink); }
+  .note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+  @media (max-width: 639px) {
+    .anova-table { font-size: .7rem; }
+  }
+</style>

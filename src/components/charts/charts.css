@@ -1,0 +1,58 @@
+/* MutuLab — gaya grafik SVG kustom (Agen K). Latar kartu putih solid, label jelas. */
+
+.plot-figure { margin: 0; }
+.plot-svg {
+  width: 100%;
+  height: auto;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 16px;
+}
+.plot-grid line { stroke: var(--surface-border); stroke-width: 1; shape-rendering: crispEdges; }
+.plot-axis { stroke: var(--ink-soft); stroke-width: 1.4; }
+.plot-tick {
+  font-family: var(--font-mono);
+  font-size: calc(12px * var(--teach-scale));
+  fill: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.plot-axis-title {
+  font-family: var(--font-ui);
+  font-size: calc(13px * var(--teach-scale));
+  fill: var(--ink);
+  font-weight: 700;
+}
+.plot-point { cursor: help; }
+.plot-point:hover .plot-marker, .plot-point:focus .plot-marker { stroke-width: 3; }
+.plot-point:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.plot-tooltip-box { fill: var(--ink); }
+.plot-tooltip-text {
+  font-family: var(--font-ui);
+  font-size: calc(12px * var(--teach-scale));
+  fill: #fff;
+  font-weight: 600;
+}
+.plot-caption {
+  margin-top: 0.6rem;
+  font-size: var(--fs-small);
+  color: var(--ink);
+  line-height: 1.6;
+}
+.plot-legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.1rem;
+  padding: 0.6rem 0 0;
+  font-size: var(--fs-small);
+  color: var(--ink);
+}
+.plot-legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.plot-legend-glyph { font-size: 16px; line-height: 1; }
+.plot-mini-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.plot-mini { flex: 1 1 210px; min-width: 0; }
+.plot-bar { transition: opacity 0.15s ease; }
+.plot-bar:hover { opacity: 0.82; }
+
+/* Mode Mengajar: grafik tetap putih solid tanpa dekorasi. */
+html[data-teaching='true'] .plot-svg { background: #fff; box-shadow: none; }

@@ -1,0 +1,428 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { MODULES, STAGES, type ModuleMeta } from '../../data/site';
+import { getModuleContent, type ModuleContent } from '../../content/modules';
+import FormulaBlock from '../../components/module/FormulaBlock.astro';
+import StageTabs from '../../components/module/StageTabs.astro';
+import CheatGrid from '../../components/module/CheatGrid.astro';
+import ExampleReveal from '../../components/module/ExampleReveal.tsx';
+import ModuleIcon from '../../components/module/ModuleIcon.astro';
+
+export function getStaticPaths() {
+  return MODULES.map((module) => ({
+    params: { slug: module.slug },
+    props: { module, content: getModuleContent(module.slug) },
+  }));
+}
+
+const { module, content } = Astro.props as { module: ModuleMeta; content: ModuleContent | undefined };
+
+if (!content) {
+  return Astro.redirect('/modul/');
+}
+
+const stageKeys = STAGES.map((s) => s.key);
+const trackLabel: Record<string, string> = {
+  sampling: 'Acceptance Sampling',
+  fondasi: 'Fondasi DOE',
+  doe: 'Design of Experiments',
+  taguchi: 'Metode Taguchi',
+};
+---
+
+<BaseLayout
+  title={`Modul ${module.number} — ${module.title} | MutuLab`}
+  description={module.description}
+  surface="page"
+  wide
+>
+  <div class="module-root" data-module-root data-slug={module.slug}>
+    <!-- ================= Header modul ================= -->
+    <header class="module-header glass-solid">
+      <div class="header-main">
+        <div class="header-mark">
+          <span class="big-number mono" aria-hidden="true">{module.number.padStart(2, '0')}</span>
+          <span class="header-icon"><ModuleIcon name={module.icon} size={34} /></span>
+        </div>
+        <div class="header-copy">
+          <nav class="breadcrumb" aria-label="Lokasi halaman">
+            <a href="/modul/">Modul</a><span aria-hidden="true">/</span><span aria-current="page">{module.title}</span>
+          </nav>
+          <span class="eyebrow">{trackLabel[module.track] ?? module.track} · Modul {module.number}</span>
+          <h1 class="serif">{module.title}</h1>
+          <p class="subtitle">{module.subtitle}</p>
+          <div class="meta-chips">
+            <span class="chip"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg> {module.minutes} menit</span>
+            <span class="chip">{STAGES.length} tahap belajar</span>
+            <span class="chip" data-difficulty={module.difficulty}>{module.difficulty}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-side">
+        <div class="progress-card" data-hide-when-teaching>
+          <div class="progress-label">
+            <span>Progres modul</span>
+            <span class="mono" data-progress-count>0 / {STAGES.length}</span>
+          </div>
+          <div class="progress-track" role="presentation"><div class="progress-fill" data-progress-fill></div></div>
+          <p class="progress-hint">Centang tahap yang telah kamu selesaikan.</p>
+        </div>
+        <div class="objectives">
+          <span class="eyebrow">Tujuan pembelajaran</span>
+          <ul>
+            {content.objectives.map((obj) => <li>{obj}</li>)}
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= Stepper ================= -->
+    <div class="tabs-sticky">
+      <StageTabs stages={STAGES} />
+    </div>
+
+    <!-- ================= Panel konten ================= -->
+    <div class="panels">
+      {STAGES.map((stage, i) => {
+        const sc = content.stages[stage.key];
+        return (
+          <section
+            class="stage-panel glass-solid"
+            id={`panel-${stage.key}`}
+            data-stage={stage.key}
+            role="tabpanel"
+            aria-labelledby={`tab-${stage.key}`}
+            hidden={i !== 0}
+          >
+            <div class="panel-head">
+              <span class="panel-step mono">{String(i + 1).padStart(2, '0')} / {String(STAGES.length).padStart(2, '0')}</span>
+              <h2 class="serif">{stage.label}</h2>
+            </div>
+
+            <div class="prose">
+              {sc.paragraphs.map((p) => <p>{p}</p>)}
+            </div>
+
+            {sc.bullets && sc.bullets.length > 0 && (
+              <ul class="content-list">
+                {sc.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            )}
+
+            {sc.formulas && sc.formulas.length > 0 && (
+              <div class="formula-stack">
+                {sc.formulas.map((f) => <FormulaBlock tex={f.tex} caption={f.caption} />)}
+              </div>
+            )}
+
+            {sc.callout && (
+              <aside class="callout" data-tone={sc.callout.tone}>
+                <strong>{sc.callout.title}</strong>
+                <p>{sc.callout.body}</p>
+              </aside>
+            )}
+
+            {sc.steps && sc.steps.length > 0 && (
+              <div class="example-section">
+                <div class="example-intro">
+                  <span class="eyebrow">Board Reveal</span>
+                  <p>Gunakan tombol <strong>→</strong> untuk membuka langkah berikutnya. Di Mode Mengajar, tombol <kbd>Spasi</kbd> pada clicker melakukan hal yang sama.</p>
+                </div>
+                <ExampleReveal client:load id={`contoh-${module.slug}`} steps={sc.steps} />
+              </div>
+            )}
+
+            {sc.table && (
+              <div class="table-card">
+                {sc.table.caption && <p class="table-caption">{sc.table.caption}</p>}
+                <div class="table-scroll">
+                  <table class="data-table">
+                    <thead><tr>{sc.table.head.map((h) => <th>{h}</th>)}</tr></thead>
+                    <tbody>
+                      {sc.table.rows.map((row) => (
+                        <tr>{row.map((cell) => <td>{cell}</td>)}</tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {sc.prompts && sc.prompts.length > 0 && (
+              <div class="prompt-section">
+                <span class="eyebrow">Pertanyaan</span>
+                <ol class="prompt-list">
+                  {sc.prompts.map((p) => <li>{p}</li>)}
+                </ol>
+                {sc.cheat && sc.cheat.length > 0 && (
+                  <details class="answer-box">
+                    <summary>Lihat kunci jawaban & pembahasan</summary>
+                    <ul>
+                      {sc.cheat.map((c) => <li><strong>{c.label}:</strong> {c.note}</li>)}
+                    </ul>
+                  </details>
+                )}
+              </div>
+            )}
+
+            {stage.key === 'coba' && (
+              <div class="tool-cards">
+                {content.related.filter((r) => r.kind === 'kalkulator' || r.kind === 'simulator').map((r) => (
+                  <a class="tool-card" href={r.href}>
+                    <span class="tool-kind">{r.kind === 'kalkulator' ? 'Kalkulator' : 'Simulator'}</span>
+                    <strong>{r.label}</strong>
+                    <span class="tool-arrow" aria-hidden="true">↗</span>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {stage.key === 'ringkasan' && (
+              <div class="ringkasan-extra">
+                <span class="eyebrow">Lembar contekan modul</span>
+                <CheatGrid items={content.cheatSheet} />
+              </div>
+            )}
+
+            <div class="panel-actions" data-hide-when-teaching>
+              <button
+                type="button"
+                class="btn btn-ghost"
+                data-goto={i > 0 ? stageKeys[i - 1] : ''}
+                disabled={i === 0}
+              >← Tahap sebelumnya</button>
+              <button
+                type="button"
+                class:list={['btn', 'mark-btn', 'btn-accent']}
+                data-mark-stage={stage.key}
+                aria-pressed="false"
+              >Tandai selesai</button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-goto={i < STAGES.length - 1 ? stageKeys[i + 1] : ''}
+                disabled={i === STAGES.length - 1}
+              >Tahap berikutnya →</button>
+            </div>
+          </section>
+        );
+      })}
+    </div>
+
+    <!-- ================= Bagian bawah ================= -->
+    <section class="after-panel" aria-label="Sumber daya lanjutan">
+      <div class="quick-card glass-solid">
+        <span class="eyebrow">Rumus kunci</span>
+        <h3 class="serif">Siap untuk <em>dipakai.</em></h3>
+        <CheatGrid items={content.cheatSheet.slice(0, 4)} compact />
+      </div>
+      <div class="related-card glass-solid">
+        <span class="eyebrow">Lanjutkan</span>
+        <h3 class="serif">Alat & modul terkait</h3>
+        <ul class="related-list">
+          {content.related.map((r) => (
+            <li>
+              <a href={r.href}>
+                <span class="related-kind">{r.kind}</span>
+                <span>{r.label}</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <p class="toast" data-toast role="status" aria-live="polite"></p>
+  </div>
+</BaseLayout>
+
+<script>
+  import { loadProgress, markStage, markModule } from '../../lib/storage';
+  import { STAGES } from '../../data/site';
+
+  const root = document.querySelector<HTMLElement>('[data-module-root]');
+  if (root) {
+    const slug = root.dataset.slug ?? '';
+    const keys = STAGES.map((s) => s.key);
+    let toastTimer: number | undefined;
+
+    function showToast(message: string) {
+      const toast = root.querySelector<HTMLElement>('[data-toast]');
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add('show');
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function refresh() {
+      const state = loadProgress();
+      const done = state.completedStages[slug] ?? [];
+
+      keys.forEach((key) => {
+        const tab = root.querySelector<HTMLElement>(`[data-stage-target="${key}"]`);
+        tab?.setAttribute('data-complete', String(done.includes(key)));
+
+        const button = root.querySelector<HTMLButtonElement>(`[data-mark-stage="${key}"]`);
+        if (button) {
+          const complete = done.includes(key);
+          button.textContent = complete ? '✓ Sudah selesai' : 'Tandai selesai';
+          button.setAttribute('aria-pressed', String(complete));
+          button.classList.toggle('is-done', complete);
+        }
+      });
+
+      const pct = Math.min(100, (done.length / keys.length) * 100);
+      const fill = root.querySelector<HTMLElement>('[data-progress-fill]');
+      const count = root.querySelector<HTMLElement>('[data-progress-count]');
+      if (fill) fill.style.width = `${pct}%`;
+      if (count) count.textContent = `${done.length} / ${keys.length}`;
+
+      if (done.length === keys.length && !state.completedModules.includes(slug)) {
+        markModule(slug);
+        showToast('Selamat! Modul ini selesai. 🎉');
+      }
+    }
+
+    refresh();
+
+    root.querySelectorAll<HTMLButtonElement>('[data-mark-stage]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const key = button.dataset.markStage;
+        if (!key) return;
+        markStage(slug, key);
+        refresh();
+        showToast(`Tahap “${STAGES.find((s) => s.key === key)?.label ?? key}” ditandai selesai.`);
+      });
+    });
+
+    root.querySelectorAll<HTMLButtonElement>('[data-goto]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.goto;
+        if (target) document.getElementById(`tab-${target}`)?.click();
+      });
+    });
+  }
+</script>
+
+<style>
+  .module-root { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); min-width: 0; width: 100%; }
+
+  /* Header */
+  .module-header {
+    border-radius: var(--radius-window);
+    padding: clamp(1.4rem, 3.5vw, 2.4rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, .75fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .header-main { display: flex; gap: 1.2rem; align-items: flex-start; }
+  .header-mark { display: grid; justify-items: center; gap: .3rem; flex-shrink: 0; }
+  .big-number { font-size: clamp(3rem, 7vw, 5rem); line-height: .9; color: var(--accent); opacity: .35; }
+  .header-icon { width: 56px; height: 56px; border-radius: 17px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+  .header-copy { min-width: 0; }
+  .breadcrumb { display: flex; gap: .5rem; align-items: center; font-size: var(--fs-micro); color: var(--ink-soft); margin-bottom: .8rem; }
+  .breadcrumb a:hover { color: var(--accent); }
+  .header-copy h1 { font-family: var(--font-display); font-size: var(--fs-h1); margin: .5rem 0 .35rem; }
+  .subtitle { color: var(--ink-soft); font-size: var(--fs-body); }
+  .meta-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; }
+  .meta-chips .chip[data-difficulty='Dasar'] { color: #0d6b49; }
+  .meta-chips .chip[data-difficulty='Menengah'] { color: #8a5700; }
+  .meta-chips .chip[data-difficulty='Lanjutan'] { color: #a5161b; }
+  .header-side { display: grid; gap: 1rem; }
+  .progress-card, .objectives { border-radius: 18px; padding: 1.1rem 1.25rem; background: rgba(255,255,255,.82); border: 1px solid var(--surface-border); }
+  .progress-label { display: flex; justify-content: space-between; font-size: var(--fs-small); font-weight: 600; }
+  .progress-label .mono { color: var(--accent); }
+  .progress-track { height: 7px; border-radius: 999px; background: var(--surface-soft); overflow: hidden; margin-top: .6rem; }
+  .progress-fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--sky-mid)); transition: width .35s ease; }
+  .progress-hint { font-size: var(--fs-micro); color: var(--ink-soft); margin-top: .5rem; }
+  .objectives ul { list-style: none; display: grid; gap: .45rem; margin-top: .6rem; }
+  .objectives li { position: relative; padding-left: 1.1rem; font-size: var(--fs-small); line-height: 1.5; color: var(--ink-soft); }
+  .objectives li::before { content: '✓'; position: absolute; left: 0; color: var(--ok); font-weight: 700; }
+
+  /* Stepper */
+  .tabs-sticky { position: sticky; top: 88px; z-index: 40; }
+  .tabs-sticky :global(.stage-tabs-outer) { box-shadow: 0 12px 32px rgba(16,42,110,.12); }
+
+  /* Panel */
+  .panels { display: grid; }
+  .stage-panel { border-radius: var(--radius-window); padding: clamp(1.5rem, 4vw, 2.75rem); }
+  .stage-panel[hidden] { display: none; }
+  .panel-head { display: flex; align-items: baseline; gap: .8rem; border-bottom: 1px solid var(--surface-border); padding-bottom: 1rem; margin-bottom: 1.4rem; }
+  .panel-step { color: var(--accent); font-size: var(--fs-micro); font-weight: 700; }
+  .panel-head h2 { font-family: var(--font-display); font-size: var(--fs-h2); }
+  .prose { display: grid; gap: 1rem; max-width: 82ch; }
+  .prose p { font-size: var(--fs-body); line-height: 1.78; color: var(--ink); }
+  .content-list { list-style: none; display: grid; gap: .55rem; margin: 1.3rem 0 0; max-width: 82ch; }
+  .content-list li { position: relative; padding-left: 1.4rem; font-size: var(--fs-small); line-height: 1.6; color: var(--ink-soft); }
+  .content-list li::before { content: ''; position: absolute; left: .2rem; top: .65rem; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .formula-stack { display: grid; gap: .8rem; margin-top: 1.4rem; max-width: 82ch; }
+  .callout { margin-top: 1.4rem; padding: 1rem 1.2rem; border-radius: 16px; border-left: 4px solid var(--accent); background: rgba(47,107,255,.07); max-width: 82ch; }
+  .callout strong { display: block; font-size: var(--fs-small); margin-bottom: .3rem; }
+  .callout p { font-size: var(--fs-small); line-height: 1.6; color: var(--ink-soft); }
+  .callout[data-tone='warn'] { border-color: var(--warn); background: rgba(245,165,36,.1); }
+  .callout[data-tone='ok'] { border-color: var(--ok); background: rgba(31,169,113,.09); }
+  .callout[data-tone='danger'] { border-color: var(--danger); background: rgba(229,72,77,.09); }
+
+  .example-section { margin-top: 1.8rem; }
+  .example-intro { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: baseline; margin-bottom: 1rem; }
+  .example-intro p { font-size: var(--fs-small); color: var(--ink-soft); }
+  .example-intro kbd { font-family: var(--font-mono); font-size: .72rem; background: var(--surface-soft); border: 1px solid var(--surface-border); border-radius: 5px; padding: .05rem .35rem; }
+
+  .table-card { margin-top: 1.5rem; }
+  .prompt-section { margin-top: 1.6rem; }
+  .prompt-list { margin-top: .6rem; padding-left: 1.3rem; display: grid; gap: .7rem; max-width: 82ch; }
+  .prompt-list li { font-size: var(--fs-small); line-height: 1.6; }
+  .prompt-list li::marker { color: var(--accent); font-weight: 700; }
+  .answer-box { margin-top: 1rem; border-radius: 14px; border: 1px solid var(--surface-border); background: var(--surface-soft); padding: .8rem 1rem; max-width: 82ch; }
+  .answer-box summary { cursor: pointer; font-size: var(--fs-small); font-weight: 600; color: var(--accent); }
+  .answer-box ul { display: grid; gap: .45rem; margin-top: .7rem; }
+  .answer-box li { font-size: var(--fs-small); line-height: 1.6; color: var(--ink-soft); }
+
+  .tool-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .75rem; margin-top: 1.6rem; }
+  .tool-card { position: relative; border-radius: 16px; padding: 1rem 1.1rem; background: var(--accent-soft); color: var(--ink); transition: transform .15s ease; }
+  .tool-card:hover { transform: translateY(-2px); }
+  .tool-kind { display: block; font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: var(--accent); }
+  .tool-card strong { display: block; margin-top: .3rem; font-size: var(--fs-small); }
+  .tool-arrow { position: absolute; right: 1rem; top: 1rem; color: var(--accent); }
+
+  .ringkasan-extra { margin-top: 1.8rem; }
+  .panel-actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; justify-content: space-between; margin-top: 2rem; padding-top: 1.3rem; border-top: 1px solid var(--surface-border); }
+  .panel-actions .btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+  .mark-btn.is-done { background: var(--ok); }
+
+  /* Bagian bawah */
+  .after-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .7fr); gap: var(--gap-bento); }
+  .quick-card, .related-card { border-radius: var(--radius-window); padding: 1.5rem 1.6rem; }
+  .quick-card h3, .related-card h3 { font-size: var(--fs-h3); margin: .35rem 0 1.1rem; }
+  .quick-card h3 em { font-style: italic; color: var(--accent); }
+  .related-list { list-style: none; display: grid; gap: .45rem; }
+  .related-list a { display: flex; align-items: center; gap: .6rem; padding: .6rem .75rem; border-radius: 12px; font-size: var(--fs-small); }
+  .related-list a:hover { background: var(--surface-soft); }
+  .related-kind { font-size: .6rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: .2rem .4rem; }
+  .related-list a span:nth-child(2) { flex: 1; }
+
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translate(-50%, 1rem); opacity: 0; pointer-events: none;
+    background: var(--cta); color: #fff; border-radius: var(--radius-pill); padding: .7rem 1.2rem;
+    font-size: var(--fs-small); box-shadow: 0 12px 30px rgba(0,0,0,.25); z-index: 300; transition: opacity .2s ease, transform .2s ease; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 1023px) {
+    .module-header, .after-panel { grid-template-columns: 1fr; }
+    .tabs-sticky { top: 78px; }
+  }
+  @media (max-width: 639px) {
+    .module-header { padding: 1.25rem; width: 100%; min-width: 0; }
+    .header-main, .header-copy { flex-direction: column; width: 100%; min-width: 0; }
+    .header-mark { display: flex; align-items: center; gap: 1rem; }
+    .big-number { font-size: 3rem; }
+    .header-copy h1 { font-size: clamp(1.9rem, 8vw, 2.6rem); overflow-wrap: anywhere; text-wrap: balance; }
+    .breadcrumb { flex-wrap: wrap; overflow-wrap: anywhere; }
+    .meta-chips .chip { min-height: 44px; display: inline-flex; align-items: center; }
+    .panel-actions .btn { flex: 1 1 100%; }
+  }
+  html[data-teaching='true'] .progress-card { background: #fff; }
+</style>

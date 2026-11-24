@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { CALCULATORS, MODULES } from '../../data/site';
+
+const icons: Record<string, string> = {
+  chart: '<path d="M4 20V4M4 20h16M8 16l4-6 3 3 5-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  grid: '<rect x="3" y="3" width="7.5" height="7.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.8"/>',
+  target: '<circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/>',
+  scan: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+};
+
+const categories = [
+  { id: 'semua', label: 'Semua' },
+  { id: 'doe', label: 'DOE dasar' },
+  { id: 'interaksi', label: 'Faktorial & interaksi' },
+  { id: 'taguchi', label: 'Taguchi' },
+  { id: 'sampling', label: 'Sampling' },
+];
+
+function categoryOf(id: string): string {
+  if (id === 'crd' || id === 'rcbd') return 'doe';
+  if (id === 'factorial') return 'interaksi';
+  if (id === 'taguchi') return 'taguchi';
+  return 'sampling';
+}
+
+const spans = ['span-6', 'span-6', 'span-4', 'span-4', 'span-4'];
+---
+
+<BaseLayout
+  title="Kalkulator — MutuLab"
+  description="Kalkulator bertahap CRD ANOVA, RCBD, faktorial 2ᵏ, Taguchi, dan acceptance sampling. Input tervalidasi, rumus, tabel antara, dan keputusan."
+  wide
+>
+  <div class="calc-intro glass-solid">
+    <nav class="page-crumb" aria-label="Breadcrumb">
+      <a href="/">Beranda</a><span aria-hidden="true">/</span><span>Kalkulator</span>
+    </nav>
+
+    <header class="index-head">
+      <p class="eyebrow">F-04 · Lima alat hitung</p>
+      <h1 class="serif">Kalkulator <em>bertahap.</em></h1>
+      <p class="lead">
+        Setiap angka bisa ditelusuri asalnya. Masukkan data, geser taraf signifikansi, lalu buka langkah demi langkah:
+        rumus → substitusi → tabel antara → keputusan.
+      </p>
+    </header>
+
+    <div class="filter-bar" role="group" aria-label="Filter kategori kalkulator">
+      {categories.map((cat, i) => (
+        <button type="button" class:list={['filter-pill', { 'is-active': i === 0 }]} data-filter={cat.id} aria-pressed={i === 0}>
+          {cat.label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="bento calc-index-grid" id="calc-grid">
+    {CALCULATORS.map((calc, i) => {
+      const module = MODULES.find((m) => m.id === calc.module);
+      return (
+        <a class:list={['card', 'calc-tile', 'glass', spans[i] ?? 'span-4']} href={`/kalkulator/${calc.slug}/`} data-category={categoryOf(calc.id)}>
+          <div class="tile-top">
+            <span class="tile-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" set:html={icons[calc.icon] ?? icons.chart} /></span>
+            <span class="tile-badge">{categoryOf(calc.id) === 'interaksi' ? 'Faktorial' : categoryOf(calc.id)}</span>
+          </div>
+          <h2>{calc.title}</h2>
+          <p>{calc.description}</p>
+          <span class="tile-module">{module ? `Terhubung ke Modul ${module.number} · ${module.title}` : 'Media ajar mandiri'}</span>
+          <span class="tile-cta">Buka kalkulator <span aria-hidden="true">→</span></span>
+        </a>
+      );
+    })}
+  </div>
+  <p class="no-result" hidden>Tidak ada kalkulator pada kategori ini.</p>
+
+  <section class="howto card">
+    <h2>Cara pakai dalam 3 langkah</h2>
+    <ol>
+      <li><strong>Isi data.</strong> Ketik angka langsung pada tabel. Pesan validasi muncul bila ada sel kosong atau jumlah replikasi tidak memungkinkan.</li>
+      <li><strong>Buka langkah.</strong> Tombol → pada pembuka langkah menampilkan satu hitungan setiap kali—cocok untuk proyektor kelas lewat Mode Mengajar.</li>
+      <li><strong>Bagikan skenario.</strong> Tombol Salin Tautan Skenario membawa seluruh data Anda ke perangkat mahasiswa lewat tautan.</li>
+    </ol>
+  </section>
+</BaseLayout>
+
+<style>
+  .calc-intro { padding: clamp(1.4rem, 3.5vw, 2.2rem); border-radius: var(--radius-window); margin-bottom: 1.5rem; }
+  .page-crumb { display: flex; gap: .6rem; align-items: center; font-size: var(--fs-micro); color: var(--ink-soft); margin-bottom: 1rem; }
+  .page-crumb a { font-weight: 700; color: var(--accent); }
+  .index-head { max-width: 78ch; margin-bottom: 1.4rem; }
+  .index-head .eyebrow { color: var(--accent); }
+  .index-head h1 { font-size: var(--fs-h1); margin: .3rem 0 .7rem; }
+  .lead { color: var(--ink-soft); font-size: var(--fs-body); line-height: 1.7; }
+
+  .filter-bar { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 0; }
+  .filter-pill {
+    border: 1px solid var(--surface-border); background: #fff; color: var(--ink-soft);
+    border-radius: var(--radius-pill); padding: .45rem .95rem; font-size: var(--fs-micro); font-weight: 700;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .filter-pill:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(16,42,110,.12); }
+  .filter-pill:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .filter-pill.is-active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 8px 18px rgba(47,107,255,.25); }
+
+  .calc-index-grid { align-items: stretch; }
+  .calc-tile {
+    display: flex; flex-direction: column; gap: .5rem; padding: 1.4rem 1.5rem;
+    text-decoration: none; color: var(--ink); min-height: 210px;
+    /* Permukaan kaca kuat: teks tetap kontras di atas foto. */
+    background: var(--glass-bg-strong);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .calc-tile:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 22px 48px rgba(16,42,110,.18); }
+  .calc-tile:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .tile-top { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+  .tile-icon {
+    display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 auto;
+    border-radius: 14px; background: var(--accent-soft); color: var(--accent);
+  }
+  .tile-badge {
+    font-size: .66rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-soft); background: rgba(255,255,255,.72); border: 1px solid var(--glass-border);
+    border-radius: var(--radius-pill); padding: .22rem .6rem;
+  }
+  .calc-tile h2 { font-family: var(--font-display); font-size: var(--fs-h3); margin-top: .2rem; }
+  .calc-tile > p { font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.55; }
+  .tile-module { font-size: .7rem; color: var(--ink-soft); opacity: .85; margin-top: auto; }
+  .tile-cta { font-size: var(--fs-micro); font-weight: 800; color: var(--accent); }
+  .no-result { margin-top: 1rem; color: var(--ink-soft); }
+
+  .howto { margin-top: 1.2rem; padding: 1.4rem 1.5rem; }
+  .howto h2 { font-family: var(--font-display); font-size: var(--fs-h3); margin-bottom: .7rem; }
+  .howto ol { margin: 0; padding-left: 1.2rem; display: grid; gap: .5rem; font-size: var(--fs-small); color: var(--ink-soft); line-height: 1.6; }
+  .howto strong { color: var(--ink); }
+
+  .calc-tile[hidden], .no-result[hidden] { display: none !important; }
+  @media (max-width: 639px) {
+    .calc-tile { min-height: 0; }
+    .index-head h1 { font-size: var(--fs-h2); }
+  }
+</style>
+
+<script>
+  const bar = document.querySelector('.filter-bar');
+  const tiles = Array.from(document.querySelectorAll<HTMLElement>('.calc-tile'));
+  const empty = document.querySelector<HTMLElement>('.no-result');
+
+  bar?.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    const button = target.closest<HTMLButtonElement>('button[data-filter]');
+    if (!button) return;
+    const filter = button.dataset.filter ?? 'semua';
+    bar.querySelectorAll('button[data-filter]').forEach((b) => {
+      const active = b === button;
+      b.classList.toggle('is-active', active);
+      b.setAttribute('aria-pressed', String(active));
+    });
+    let visible = 0;
+    tiles.forEach((tile) => {
+      const show = filter === 'semua' || tile.dataset.category === filter;
+      tile.hidden = !show;
+      if (show) visible += 1;
+    });
+    if (empty) empty.hidden = visible !== 0;
+  });
+</script>

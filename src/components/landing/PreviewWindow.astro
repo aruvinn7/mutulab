@@ -1,0 +1,157 @@
+---
+import AnovaMini from './AnovaMini.astro';
+import InteractionPlot from './InteractionPlot.astro';
+import TaguchiMini from './TaguchiMini.astro';
+import DecisionCard from './DecisionCard.astro';
+
+const filters = [
+  { label: 'DOE', href: '/kalkulator/crd-anova/', active: true },
+  { label: 'Taguchi', href: '/kalkulator/taguchi-sn/', active: false },
+  { label: 'Sampling', href: '/kalkulator/sampling-oc/', active: false },
+  { label: 'Latihan', href: '/latihan/', active: false },
+];
+---
+
+<section class="preview-window glass" aria-label="Pratinjau command center MutuLab">
+  <div class="window-bar">
+    <div class="traffic" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="window-title"><strong>MutuLab</strong><span class="slash">/</span><span>Command Center</span></div>
+    <div class="window-meta mono">SESI&nbsp; DOE–2026 · <span class="saved">MODE KALKULASI</span></div>
+  </div>
+
+  <div class="filter-row" aria-label="Filter pratinjau">
+    <span class="filter-label">Pratinjau</span>
+    {filters.map((f) => (
+      <a class:list={['chip', 'filter-chip', { 'is-active': f.active }]} href={f.href}
+        aria-current={f.active ? 'page' : undefined}>{f.label}</a>
+    ))}
+    <span class="filter-spacer"></span>
+    <span class="window-hint">Contoh perhitungan ANOVA &amp; Taguchi →</span>
+  </div>
+
+  <div class="bento preview-bento">
+    <article class="bento-cell cell-anova data-card">
+      <header class="cell-head">
+        <div>
+          <span class="cell-kicker mono">CRD · 4 perlakuan · 6 replikasi</span>
+          <h2>ANOVA Satu Arah</h2>
+        </div>
+        <span class="cell-badge mono">α = 0,05</span>
+      </header>
+      <AnovaMini />
+    </article>
+
+    <article class="bento-cell cell-plot data-card">
+      <header class="cell-head">
+        <div>
+          <span class="cell-kicker mono">Interaksi · 2 × 2</span>
+          <h2>Interaction Plot</h2>
+        </div>
+        <span class="cell-badge">A × B</span>
+      </header>
+      <InteractionPlot />
+    </article>
+
+    <article class="bento-cell cell-taguchi data-card">
+      <header class="cell-head">
+        <div>
+          <span class="cell-kicker mono">Taguchi · optimasi parameter</span>
+          <h2>Matriks L₄ &amp; S/N</h2>
+        </div>
+        <span class="cell-badge">dB</span>
+      </header>
+      <TaguchiMini />
+    </article>
+
+    <article class="bento-cell cell-decision data-card">
+      <header class="cell-head">
+        <div>
+          <span class="cell-kicker mono">Interpretasi otomatis</span>
+          <h2>Hasil Pengujian</h2>
+        </div>
+      </header>
+      <DecisionCard />
+    </article>
+  </div>
+</section>
+
+<style>
+  .preview-window { width: min(1080px, 100%); margin: 1.5rem auto 0; padding: 0;
+    border-radius: var(--radius-window); position: relative; z-index: 2;
+    background: linear-gradient(135deg, rgba(10, 28, 68, .66), rgba(6, 18, 46, .46) 58%, rgba(12, 32, 74, .56));
+    border: 1px solid rgba(255,255,255,.44);
+    backdrop-filter: blur(30px) saturate(170%); -webkit-backdrop-filter: blur(30px) saturate(170%);
+    box-shadow: 0 34px 84px rgba(4, 18, 56, .36), inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(255,255,255,.12); }
+  .window-bar { display: flex; align-items: center; gap: .9rem; padding: .9rem 1.2rem;
+    border-bottom: 1px solid rgba(255,255,255,.20);
+    background: rgba(255,255,255,.08); color: #fff; }
+  .traffic { display: inline-flex; gap: 6px; flex-shrink: 0; }
+  .traffic span { width: 11px; height: 11px; border-radius: 50%; }
+  .traffic span:nth-child(1) { background: #ff5f57; }
+  .traffic span:nth-child(2) { background: #febc2e; }
+  .traffic span:nth-child(3) { background: #28c840; }
+  .window-title { display: inline-flex; align-items: baseline; gap: .45rem;
+    font-size: .76rem; color: #fff; }
+  .window-title strong { font-weight: 700; }
+  .window-title .slash { color: rgba(255,255,255,.72); }
+  .window-meta { margin-left: auto; font-size: .6rem; letter-spacing: .04em; color: rgba(255,255,255,.9); }
+  .saved { color: #b9f2d5; font-weight: 600; } /* hijau terang: terbaca di bar gelap di atas foto */
+
+  .filter-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem;
+    padding: .9rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .filter-label { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: rgba(255,255,255,.9); margin-right: .3rem; }
+  .filter-chip { color: #fff; background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.26); cursor: pointer;
+    transition: background .15s ease, transform .15s ease; }
+  .filter-chip:hover { background: rgba(255,255,255,.26); transform: translateY(-1px); }
+  .filter-chip.is-active { background: #fff; color: var(--ink); border-color: #fff;
+    box-shadow: 0 4px 12px rgba(4,18,54,.18); }
+  .filter-spacer { flex: 1 1 auto; }
+  .window-hint { font-size: .62rem; color: rgba(255,255,255,.92); }
+
+  .preview-bento { padding: 1.1rem 1.2rem 1.4rem; align-items: stretch; }
+  .cell-anova { grid-column: span 7; }
+  .cell-plot { grid-column: span 5; }
+  .cell-taguchi { grid-column: span 7; }
+  .cell-decision { grid-column: span 5; }
+  .bento-cell { padding: 1.05rem 1.15rem; border-radius: 18px; min-width: 0;
+    background: linear-gradient(150deg, rgba(255,255,255,.90), rgba(255,255,255,.74));
+    border: 1px solid rgba(255,255,255,.78);
+    backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%);
+    box-shadow: 0 14px 36px rgba(10,34,90,.16), inset 0 1px 0 rgba(255,255,255,.95); }
+  .cell-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
+    gap: .6rem; }
+  .cell-head h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.3rem;
+    letter-spacing: -.02em; line-height: 1.1; margin-top: .18rem; }
+  .cell-kicker { font-size: .58rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+  .cell-badge { font-size: .6rem; font-weight: 700; color: var(--accent);
+    background: var(--accent-soft); padding: .25rem .6rem; border-radius: var(--radius-pill); }
+
+  @media (max-width: 1023px) {
+    /* Tetap 2×2 agar hero tidak menjulur dan lanskap gunung tetap terlihat. */
+    .preview-bento { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .cell-anova, .cell-plot, .cell-taguchi, .cell-decision { grid-column: span 6; }
+    .window-meta { display: none; }
+  }
+  @media (max-width: 639px) {
+    .preview-window { margin-top: 2.4rem; border-radius: 20px; }
+    .window-bar { padding: .75rem .9rem; gap: .6rem; }
+    .window-title { font-size: .7rem; }
+    .filter-row { padding: .75rem .9rem; }
+    .window-hint { display: none; }
+    .preview-bento { padding: .8rem .9rem 1rem; }
+    .bento-cell { padding: .9rem 1rem; }
+  }
+  html[data-teaching='true'] .preview-window { background: #fff; }
+  html[data-teaching='true'] .window-bar,
+  html[data-teaching='true'] .filter-row { background: #fff; border-color: var(--surface-border); }
+  html[data-teaching='true'] .window-title,
+  html[data-teaching='true'] .window-meta,
+  html[data-teaching='true'] .filter-label,
+  html[data-teaching='true'] .window-hint { color: var(--ink); }
+  html[data-teaching='true'] .window-title .slash { color: var(--ink-soft); }
+  html[data-teaching='true'] .bento-cell { background: #fff; box-shadow: none; border-color: var(--surface-border); }
+  html[data-teaching='true'] .filter-chip { background: #fff; border-color: var(--surface-border); color: var(--ink); }
+  html[data-teaching='true'] .saved { color: #0d6b49; }
+</style>

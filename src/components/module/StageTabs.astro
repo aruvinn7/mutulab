@@ -1,0 +1,99 @@
+---
+/** Stepper horizontal 6 tahap; dapat diklik & dinavigasi dengan keyboard. */
+import type { StageMeta } from '../../data/site';
+
+interface Props {
+  stages: StageMeta[];
+}
+const { stages } = Astro.props;
+---
+
+<div class="stage-tabs-outer glass-solid">
+  <div class="stage-tabs" role="tablist" aria-label="Tahap pembelajaran modul">
+    {stages.map((stage, i) => (
+      <button
+        type="button"
+        class="stage-tab"
+        role="tab"
+        id={`tab-${stage.key}`}
+        data-stage-target={stage.key}
+        aria-controls={`panel-${stage.key}`}
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+      >
+        <span class="tab-no mono">{String(i + 1).padStart(2, '0')}</span>
+        <span class="tab-label">{stage.short}</span>
+        <span class="tab-check" aria-hidden="true">✓</span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-module-root]');
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('.stage-tab'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>('.stage-panel'));
+    const keys = tabs.map((t) => t.dataset.stageTarget ?? '');
+
+    function activate(key: string, focus = false) {
+      tabs.forEach((tab) => {
+        const on = tab.dataset.stageTarget === key;
+        tab.classList.toggle('is-active', on);
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach((panel) => { panel.hidden = panel.dataset.stage !== key; });
+      if (window.location.hash.slice(1) !== key) {
+        window.history.replaceState(null, '', `#${key}`);
+      }
+      if (focus) tabs.find((t) => t.dataset.stageTarget === key)?.focus();
+      window.dispatchEvent(new CustomEvent('mutulab:stage-change', { detail: { stage: key } }));
+    }
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => activate(tab.dataset.stageTarget ?? ''));
+      tab.addEventListener('keydown', (event) => {
+        const key = event.key;
+        if (key !== 'ArrowRight' && key !== 'ArrowLeft' && key !== 'Home' && key !== 'End') return;
+        event.preventDefault();
+        let next = i;
+        if (key === 'ArrowRight') next = (i + 1) % tabs.length;
+        if (key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length;
+        if (key === 'Home') next = 0;
+        if (key === 'End') next = tabs.length - 1;
+        activate(keys[next], true);
+      });
+    });
+
+    const initial = window.location.hash.slice(1);
+    activate(keys.includes(initial) ? initial : keys[0]);
+
+    window.addEventListener('hashchange', () => {
+      const key = window.location.hash.slice(1);
+      if (keys.includes(key)) activate(key);
+    });
+  }
+</script>
+
+<style>
+  .stage-tabs-outer { border-radius: var(--radius-pill); padding: .45rem; overflow-x: auto; }
+  .stage-tabs { display: flex; gap: .3rem; min-width: max-content; }
+  .stage-tab {
+    display: inline-flex; align-items: center; gap: .45rem;
+    border: 0; background: transparent; color: var(--ink-soft);
+    padding: .55rem .85rem; border-radius: var(--radius-pill);
+    font-size: var(--fs-small); font-weight: 600; white-space: nowrap;
+    transition: background .15s ease, color .15s ease;
+  }
+  .stage-tab:hover { background: rgba(47,107,255,.08); color: var(--ink); }
+  .stage-tab.is-active { background: var(--accent); color: #fff; box-shadow: 0 6px 16px rgba(47,107,255,.28); }
+  .tab-no { font-size: .72rem; opacity: .7; }
+  .tab-check { font-size: .8rem; opacity: 0; width: 0; }
+  .stage-tab[data-complete='true'] .tab-check { opacity: 1; width: auto; color: var(--ok); }
+  .stage-tab.is-active[data-complete='true'] .tab-check { color: #fff; }
+  @media (max-width: 639px) {
+    .stage-tab { padding: .5rem .7rem; }
+    .tab-no { display: none; }
+  }
+</style>

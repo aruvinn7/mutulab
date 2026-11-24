@@ -1,0 +1,22 @@
+---
+/** Foto lanskap berkualitas tinggi (WebP q90, srcset responsif + blur placeholder). */
+interface Props {
+  eager?: boolean;
+  class?: string;
+}
+const { eager = false, class: className = '' } = Astro.props;
+---
+
+<picture class:list={['landscape-photo', className]} aria-hidden="true">
+  <source media="(min-width: 1600px)" srcset="/img/landscape-2048.webp" type="image/webp" />
+  <source media="(min-width: 1024px)" srcset="/img/landscape-1920.webp" type="image/webp" />
+  <source media="(min-width: 640px)" srcset="/img/landscape-1280.webp" type="image/webp" />
+  <img
+    src="/img/landscape-640.webp"
+    alt=""
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    decoding="async"
+    style={`background-image:url('/img/landscape-blur.webp');background-size:cover;background-position:center`}
+  />
+</picture>

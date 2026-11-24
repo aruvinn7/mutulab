@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FactorialCalc from '../../components/calculators/FactorialCalc.tsx';
+---
+
+<BaseLayout
+  title="Faktorial 2ᵏ · Yates — MutuLab"
+  description="Kalkulator faktorial 2² dan 2³: Algoritma Yates, efek utama dan interaksi, persamaan regresi, ANOVA, serta interaction plot interaktif."
+  wide
+>
+  <nav class="page-crumb glass-solid" aria-label="Breadcrumb">
+    <a href="/kalkulator/">Kalkulator</a><span aria-hidden="true">/</span><span>Faktorial 2ᵏ</span>
+  </nav>
+  <div class="calc-stage">
+    <FactorialCalc client:load />
+  </div>
+</BaseLayout>
+
+<style>
+  .page-crumb { display: inline-flex; gap: .6rem; align-items: center; font-size: var(--fs-micro);
+    color: var(--ink-soft); margin-bottom: 1rem; padding: .45rem .9rem; border-radius: var(--radius-pill); }
+  .page-crumb a { font-weight: 700; color: var(--accent); }
+  /* Kalkulator berdiri di atas permukaan kaca solid agar angka tetap terbaca. */
+  .calc-stage :global(.calc-window) { background: var(--glass-bg-strong); }
+</style>

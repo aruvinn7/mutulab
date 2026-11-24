@@ -1,0 +1,115 @@
+---
+import '../styles/global.css';
+import Topbar from '../components/brand/Topbar.astro';
+import Logo from '../components/brand/Logo.astro';
+import LandscapePhoto from '../components/brand/LandscapePhoto.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** 'hero' = lanskap penuh; 'page' = halaman dalam dengan gunung tipis di dasar */
+  surface?: 'hero' | 'page';
+  wide?: boolean;
+}
+const {
+  title = 'MutuLab — Pahami eksperimen. Rancang kualitasnya.',
+  description = 'Platform belajar interaktif Design of Experiments, Taguchi, dan Acceptance Sampling untuk mahasiswa dan pengajar teknik industri.',
+  surface = 'page',
+  wide = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="id" data-teaching="false">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1F5EFF" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <title>{title}</title>
+    <script is:inline>
+      // Pulihkan Mode Mengajar sebelum paint (menghindari kedip).
+      try {
+        if (localStorage.getItem('mutulab.teaching') === '1') document.documentElement.dataset.teaching = 'true';
+      } catch (e) {}
+    </script>
+  </head>
+  <body data-surface={surface}>
+    <div class="site-backdrop" aria-hidden="true">
+      <LandscapePhoto variant="page" />
+      <div class="site-backdrop-veil"></div>
+    </div>
+    <a href="#main" class="skip-link">Lewati ke konten</a>
+    <Topbar />
+    <main id="main" class:list={['main', { wide }]} data-hide-when-teaching-nav>
+      <slot />
+    </main>
+    <footer class="site-footer" data-hide-when-teaching>
+      <div class="footer-pill">
+        <div class="footer-brand">
+          <Logo size={26} light />
+          <span class="footer-divider" aria-hidden="true"></span>
+          <span class="footer-tagline">DOE · Taguchi · Acceptance Sampling</span>
+        </div>
+        <nav class="footer-nav" aria-label="Tautan footer">
+          <a href="/modul/">Modul</a>
+          <a href="/kalkulator/">Kalkulator</a>
+          <a href="/latihan/">Latihan</a>
+          <a href="/cheat-sheet/">Referensi</a>
+          <a href="/panduan/">Panduan</a>
+          <a href="/privasi/">Privasi</a>
+        </nav>
+      </div>
+    </footer>
+    <script>
+      // Sinkronisasi label toggle saat halaman dimuat ulang.
+      window.dispatchEvent(new Event('mutulab:teaching:sync'));
+
+      // Service worker untuk mode offline (F-11).
+      if ('serviceWorker' in navigator && import.meta.env.PROD) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  .main { position: relative; z-index: 1; width: 100%; max-width: 1200px; margin-inline: auto; padding: 108px 1.25rem 5rem; min-height: 70vh; }
+  .main.wide { max-width: 1400px; }
+  /* Footer berbentuk bilah pil lebar, mengikuti bahasa visual topbar. */
+  .site-footer { position: relative; z-index: 1; padding: 2.5rem 1.25rem 2rem; background: transparent; }
+  .footer-pill {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    width: min(1120px, 100%); margin-inline: auto;
+    padding: .65rem .8rem .65rem 1.1rem;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(120deg, rgba(18, 34, 72, .72), rgba(8, 18, 42, .58));
+    border: 1px solid rgba(255,255,255,.30);
+    backdrop-filter: blur(30px) saturate(170%); -webkit-backdrop-filter: blur(30px) saturate(170%);
+    box-shadow: 0 18px 50px rgba(4, 18, 54, .32), inset 0 1px 0 rgba(255,255,255,.32);
+    color: #fff;
+  }
+  .footer-brand { display: flex; align-items: center; gap: .8rem; min-width: 0; }
+  .footer-divider { width: 1px; height: 18px; background: rgba(255,255,255,.28); }
+  .footer-tagline { font-size: var(--fs-micro); color: rgba(255,255,255,.72); white-space: nowrap; }
+  .footer-nav { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; }
+  .footer-nav a {
+    padding: .5rem .8rem; border-radius: var(--radius-pill);
+    font-size: var(--fs-micro); font-weight: 600; color: rgba(255,255,255,.78);
+    transition: background .16s ease, color .16s ease;
+  }
+  .footer-nav a:hover { background: rgba(255,255,255,.14); color: #fff; }
+  @media (max-width: 760px) {
+    .footer-pill { flex-direction: column; align-items: flex-start; border-radius: 24px; padding: 1rem; }
+    .footer-nav { width: 100%; }
+    .footer-tagline { white-space: normal; }
+  }
+  html[data-teaching='true'] .footer-pill { background: #0c1630; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  @media (max-width: 639px) { .main { padding-top: 92px; } }
+  body[data-surface='hero'] .main { max-width: none; padding: 0; }
+</style>
