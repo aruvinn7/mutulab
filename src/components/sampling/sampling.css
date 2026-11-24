@@ -90,12 +90,17 @@
   padding: .7rem .85rem; font-size: var(--fs-small); color: #7a4d00; line-height: 1.55; margin-bottom: .8rem; }
 
 @media (max-width: 1023px) {
-  .sp-grid > .span-3, .sp-grid > .span-4, .sp-grid > .span-5, .sp-grid > .span-6, .sp-grid > .span-7, .sp-grid > .span-8 { grid-column: span 6; }
+  .sp-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .sp-grid > .span-3, .sp-grid > .span-4, .sp-grid > .span-5, .sp-grid > .span-6,
+  .sp-grid > .span-7, .sp-grid > .span-8, .sp-grid > .span-12,
+  .sp-grid .span-3, .sp-grid .span-4, .sp-grid .span-5, .sp-grid .span-6,
+  .sp-grid .span-7, .sp-grid .span-8, .sp-grid .span-12 { grid-column: span 6 !important; min-width: 0; }
 }
 @media (max-width: 639px) {
   .sp-grid { grid-template-columns: minmax(0, 1fr); }
-  .sp-grid > * { grid-column: 1 / -1; }
-  .sp-controls { grid-template-columns: 1fr; }
+  .sp-grid > *, .sp-grid .span-3, .sp-grid .span-4, .sp-grid .span-5,
+  .sp-grid .span-6, .sp-grid .span-7, .sp-grid .span-8, .sp-grid .span-12 { grid-column: 1 / -1 !important; min-width: 0; }
+  .sp-controls { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Mode Mengajar: permukaan solid, tanpa bayangan/efek dekoratif. */

@@ -112,12 +112,17 @@ ul, ol { margin: 0; padding: 0; }
 
 @media (max-width: 1023px) {
   .bento { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .bento > astro-island { grid-column: 1 / -1; min-width: 0; }
   .bento > .span-3, .bento > .span-4, .bento > .span-5,
-  .bento > .span-6, .bento > .span-7, .bento > .span-8 { grid-column: span 6; }
+  .bento > .span-6, .bento > .span-7, .bento > .span-8, .bento > .span-12,
+  .bento .span-3, .bento .span-4, .bento .span-5, .bento .span-6,
+  .bento .span-7, .bento .span-8, .bento .span-12 { grid-column: span 6 !important; min-width: 0; }
 }
 @media (max-width: 639px) {
   .bento { grid-template-columns: minmax(0, 1fr); }
-  .bento > * { grid-column: 1 / -1 !important; }
+  .bento > *, .bento > astro-island { grid-column: 1 / -1 !important; min-width: 0; }
+  .bento .span-3, .bento .span-4, .bento .span-5, .bento .span-6,
+  .bento .span-7, .bento .span-8, .bento .span-12 { grid-column: 1 / -1 !important; min-width: 0; }
 }
 
 .btn {
@@ -251,8 +256,11 @@ html[data-teaching='true'] .hero-title--reveal .title-em { color: var(--ink); -w
 html[data-teaching='true'] .site-backdrop { display: none; }
 
 /* ---------- Rumus & kalkulator ---------- */
-.formula { font-family: 'KaTeX_Main', var(--font-ui); color: var(--ink); }
-.formula-block { display: block; overflow-x: auto; padding: .35rem 0; }
+.formula { font-family: 'KaTeX_Main', var(--font-ui); color: var(--ink); max-width: 100%; }
+.formula-block { display: block; overflow-x: auto; overflow-y: hidden; padding: .35rem 0; max-width: 100%; }
+.katex-display { max-width: 100%; overflow-x: auto; overflow-y: hidden; padding-bottom: .15rem; }
+.katex-display > .katex { max-width: 100%; }
+@media (max-width: 639px) { .katex-display { font-size: .82em; } }
 .calc-window { border-radius: var(--radius-window); overflow: hidden; }
 .calc-head {
   display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start; justify-content: space-between;
@@ -270,16 +278,18 @@ html[data-teaching='true'] .site-backdrop { display: none; }
 }
 .calc-body { padding: 1.5rem 1.6rem 2rem; }
 
-.reveal { display: grid; gap: 1rem; }
-.stepper { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .45rem .7rem; width: fit-content; }
+.reveal { display: grid; gap: 1rem; min-width: 0; width: 100%; }
+.stepper { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .45rem .7rem; width: fit-content; max-width: 100%; min-width: 0; }
 .stepper button { border: 0; background: rgba(47,107,255,.1); color: var(--accent); border-radius: 50%;
   width: 30px; height: 30px; display: grid; place-items: center; font-weight: 700; }
 .stepper button:disabled { opacity: .35; cursor: not-allowed; }
 .stepper .text-btn { width: auto; height: auto; border-radius: var(--radius-pill); padding: .3rem .6rem; background: transparent; font-size: var(--fs-micro); }
 .stepper .step-count { font-family: var(--font-mono); font-size: var(--fs-micro); font-weight: 600; }
 .stepper .divider { width: 1px; height: 18px; background: var(--surface-border); }
-.reveal-list { list-style: none; display: grid; gap: .85rem; padding: 0; }
-.reveal-step { padding: 1.15rem 1.35rem; transition: opacity .2s ease, transform .2s ease; }
+.reveal-list { list-style: none; display: grid; gap: .85rem; padding: 0; min-width: 0; width: 100%; }
+.reveal-step { padding: 1.15rem 1.35rem; transition: opacity .2s ease, transform .2s ease; min-width: 0; max-width: 100%; overflow: hidden; }
+.reveal-step .step-content, .reveal-step .step-content > * { max-width: 100%; }
+.reveal-step .data-table, .reveal-step .calc-tight-table { display: block; overflow-x: auto; }
 .reveal-step.is-hidden { opacity: .28; filter: saturate(.4); transform: scale(.995); }
 .reveal-step.is-hidden .step-content { display: none; }
 .step-title { display: flex; align-items: baseline; gap: .7rem; margin-bottom: .7rem; }
@@ -299,10 +309,11 @@ html[data-teaching='true'] .site-backdrop { display: none; }
 
 /* ---------- Sentuhan HP: target ≥44px & tidak ada teks terpotong ---------- */
 @media (max-width: 639px) {
-  .chip, .btn {
+  .chip, .btn, .filter-pill, .ft-tab, .stage-tab, .sbx-btn {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     white-space: normal;
   }
   h1, h2, h3 { overflow-wrap: anywhere; text-wrap: balance; }
