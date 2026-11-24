@@ -93,7 +93,10 @@ const { stages } = Astro.props;
   .stage-tab[data-complete='true'] .tab-check { opacity: 1; width: auto; color: var(--ok); }
   .stage-tab.is-active[data-complete='true'] .tab-check { color: #fff; }
   @media (max-width: 639px) {
-    .stage-tab { padding: .5rem .7rem; }
+    .stage-tabs-outer { border-radius: var(--radius-card); overflow: visible; padding: .5rem; }
+    .stage-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; min-width: 0; width: 100%; }
+    .stage-tab { justify-content: center; min-height: 44px; padding: .45rem .3rem;
+      font-size: var(--fs-micro); white-space: normal; text-align: center; }
     .tab-no { display: none; }
   }
 </style>

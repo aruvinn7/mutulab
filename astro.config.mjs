@@ -6,4 +6,5 @@ export default defineConfig({
   site: 'https://mutulab.pages.dev',
   output: 'static',
   build: { inlineStylesheets: 'auto' },
+  devToolbar: { enabled: false },
 });

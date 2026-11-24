@@ -70,7 +70,14 @@ import OrthogonalArrays from '../components/reference/OrthogonalArrays';
   .ft-ringkas { font-size: var(--fs-small); margin-bottom: 1rem; }
   .ft-formulas { display: grid; gap: .85rem; }
   .ft-formula { padding: .85rem 1rem; border-radius: 14px; background: var(--surface-soft); border: 1px solid var(--surface-border); }
-  .ft-formula .formula-block { overflow-x: auto; }
+  .ft-formula .formula-block { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+  @media (max-width: 639px) {
+    .ft-formula { padding: .7rem; }
+    .ft-formula .formula-block { font-size: .85em; overflow-x: auto; }
+    .ft-formula .katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: .2rem; }
+    .ft-formula .katex { font-size: .78em; }
+    .ft-formula p, .ft-formula li { overflow-wrap: anywhere; }
+  }
   .ft-note { font-size: var(--fs-micro); margin-top: .35rem; line-height: 1.5; }
 
   /* --- DecisionTree --- */

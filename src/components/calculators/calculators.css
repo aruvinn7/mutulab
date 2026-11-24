@@ -228,6 +228,13 @@
 
 /* Mode Mengajar: tanpa bayangan/efek dekoratif, kontras maksimal. */
 html[data-teaching='true'] .calc-input,
+@media (max-width: 639px) {
+  .calc-matrix-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .calc-matrix { border-spacing: 3px; font-size: .78rem; }
+  .calc-matrix th { font-size: .66rem; padding: .15rem .15rem; }
+  .calc-matrix input { width: 56px; padding: .3rem .35rem; font-size: .8rem; }
+}
+
 html[data-teaching='true'] .calc-matrix input,
 html[data-teaching='true'] .calc-action-btn { background: #fff; box-shadow: none; }
 html[data-teaching='true'] .calc-action-btn:hover { transform: none; box-shadow: none; }
